@@ -3,6 +3,18 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_compile_definitions(SFML_STATIC)
 
+set(RESOURCES
+	data/accept.png
+	data/clear.png
+	data/exit.png
+	data/font.ttf
+	data/icon.png
+	data/local.png
+	data/online.png
+	data/random.png
+	data/TitleFont.ttf
+)
+
 set(SOURCES
 	src/Board.cpp
 	src/Connection.cpp
@@ -43,3 +55,6 @@ endif()
 
 target_include_directories(BattleShip PRIVATE $<SEMICOLON>$<JOIN:${CMAKE_SYSTEM_PREFIX_PATH},/include$<SEMICOLON>>/include)
 target_link_libraries(BattleShip PRIVATE ${SFML} ${SFML_DEPENDENCIES})
+
+install(TARGETS BattleShip DESTINATION .)
+install(FILES ${RESOURCES} DESTINATION ./data)
