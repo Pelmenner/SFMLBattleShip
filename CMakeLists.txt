@@ -50,6 +50,7 @@ else()
 endif()
 
 target_include_directories(BattleShip PRIVATE $<SEMICOLON>$<JOIN:${CMAKE_SYSTEM_PREFIX_PATH},/include$<SEMICOLON>>/include)
+target_include_directories(BattleShip PRIVATE $<SEMICOLON>$<JOIN:${CMAKE_PREFIX_PATH},/include$<SEMICOLON>>/include)
 target_link_libraries(BattleShip PRIVATE ${SFML} ${SFML_DEPENDENCIES})
 
 install(TARGETS BattleShip DESTINATION .)
