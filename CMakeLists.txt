@@ -4,53 +4,53 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_compile_definitions(SFML_STATIC)
 
 set(RESOURCES
-	data/accept.png
-	data/clear.png
-	data/exit.png
-	data/font.ttf
-	data/icon.png
-	data/local.png
-	data/online.png
-	data/random.png
-	data/TitleFont.ttf
+    data/accept.png
+    data/clear.png
+    data/exit.png
+    data/font.ttf
+    data/icon.png
+    data/local.png
+    data/online.png
+    data/random.png
+    data/TitleFont.ttf
 )
 
 set(SOURCES
-	src/Board.cpp
-	src/Connection.cpp
-	src/EnemyBoard.cpp
-	src/Functions.cpp
-	src/Game.cpp
-	src/main.cpp
-	src/Online.cpp
+    src/Board.cpp
+    src/Connection.cpp
+    src/EnemyBoard.cpp
+    src/Functions.cpp
+    src/Game.cpp
+    src/main.cpp
+    src/Online.cpp
 )
 
 project(BattleShip VERSION 1.0)
 add_executable(BattleShip ${SOURCES})
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	find_library(SFML_GRAPHICS sfml-graphics-s-d REQUIRED)
-	find_library(SFML_WINDOW sfml-window-s-d REQUIRED)
-	find_library(SFML_SYSTEM sfml-system-s-d REQUIRED)
-	find_library(SFML_NETWORK sfml-network-s-d REQUIRED)
-	set(SFML ${SFML_GRAPHICS} ${SFML_WINDOW} ${SFML_SYSTEM} ${SFML_NETWORK})
+    find_library(SFML_GRAPHICS sfml-graphics-s-d REQUIRED)
+    find_library(SFML_WINDOW sfml-window-s-d REQUIRED)
+    find_library(SFML_SYSTEM sfml-system-s-d REQUIRED)
+    find_library(SFML_NETWORK sfml-network-s-d REQUIRED)
+    set(SFML ${SFML_GRAPHICS} ${SFML_WINDOW} ${SFML_SYSTEM} ${SFML_NETWORK})
 else()
-	find_library(SFML_GRAPHICS sfml-graphics-s REQUIRED)
-	find_library(SFML_WINDOW sfml-window-s REQUIRED)
-	find_library(SFML_SYSTEM sfml-system-s REQUIRED)
-	find_library(SFML_NETWORK sfml-network-s REQUIRED)
-	set(SFML ${SFML_GRAPHICS} ${SFML_WINDOW} ${SFML_SYSTEM} ${SFML_NETWORK})
+    find_library(SFML_GRAPHICS sfml-graphics-s REQUIRED)
+    find_library(SFML_WINDOW sfml-window-s REQUIRED)
+    find_library(SFML_SYSTEM sfml-system-s REQUIRED)
+    find_library(SFML_NETWORK sfml-network-s REQUIRED)
+    set(SFML ${SFML_GRAPHICS} ${SFML_WINDOW} ${SFML_SYSTEM} ${SFML_NETWORK})
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	find_library(FREETYPE freetype REQUIRED)
-	find_library(OPENGL32 opengl32 REQUIRED)
-	find_library(WINMM winmm REQUIRED)
-	find_library(GDI32 gdi32 REQUIRED)
-	find_library(WS232 ws2_32 REQUIRED)
-	set(SFML_DEPENDENCIES ${FREETYPE} ${OPENGL32} ${GDI32} ${WINMM} ${WS232})
+    find_library(FREETYPE freetype REQUIRED)
+    find_library(OPENGL32 opengl32 REQUIRED)
+    find_library(WINMM winmm REQUIRED)
+    find_library(GDI32 gdi32 REQUIRED)
+    find_library(WS232 ws2_32 REQUIRED)
+    set(SFML_DEPENDENCIES ${FREETYPE} ${OPENGL32} ${GDI32} ${WINMM} ${WS232})
 else()
-	find_library(SFML_DEPENDENCIES pthread REQUIRED)
+    find_library(SFML_DEPENDENCIES pthread REQUIRED)
 endif()
 
 target_include_directories(BattleShip PRIVATE $<SEMICOLON>$<JOIN:${CMAKE_SYSTEM_PREFIX_PATH},/include$<SEMICOLON>>/include)
