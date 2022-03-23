@@ -3,3 +3,5 @@ x64/
 Sea Battle.*
 Release/
 Debug/
+out/
+CMakeSettings.json
