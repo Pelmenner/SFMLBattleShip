@@ -4,19 +4,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_compile_definitions(SFML_STATIC)
 
 set(RESOURCES
-    data/accept.png
-    data/clear.png
-    data/exit.png
+    data/button.png
     data/font.ttf
     data/icon.png
-    data/local.png
-    data/online.png
-    data/random.png
     data/TitleFont.ttf
 )
 
 set(SOURCES
     src/Board.cpp
+    src/Button.cpp
     src/Connection.cpp
     src/EnemyBoard.cpp
     src/Functions.cpp
