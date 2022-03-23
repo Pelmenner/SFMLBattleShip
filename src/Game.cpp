@@ -10,15 +10,11 @@ bool Game::playLocal()
 {
 	const sf::Vector2f buttonSize = sf::Vector2f(122.0f, 71.0f);
 
-	sf::RectangleShape replayButton;
-	replayButton.setSize(buttonSize);
-	replayButton.setPosition(sf::Vector2f(800.0f, 630.0f));
-	replayButton.setTexture(restartTexture);
+	sf::Font buttonFont;
+	buttonFont.loadFromFile("TitleFont.ttf");
 
-	sf::RectangleShape exitButton;
-	exitButton.setSize(buttonSize);
-	exitButton.setPosition(sf::Vector2f(1000.0f, 630.0f));
-	exitButton.setTexture(exitTexture);
+	Button replayButton({ 800.0f, 630.0f }, buttonSize, buttonFont, "Replay");
+	Button exitButton({ 1000.0f, 630.0f }, buttonSize, buttonFont, "Exit");
 
 	sf::RectangleShape bg;
 	bg.setFillColor(blackColor);
@@ -60,9 +56,9 @@ bool Game::playLocal()
 
 				if (finished)
 				{
-					if (replayButton.getGlobalBounds().contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+					if (replayButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
 						return true;
-					if (exitButton.getGlobalBounds().contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+					if (exitButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
 						return false;
 					break;
 				}
@@ -137,8 +133,8 @@ bool Game::playLocal()
 
 		if (finished)
 		{
-			window.draw(replayButton);
-			window.draw(exitButton);
+			replayButton.draw(window);
+			exitButton.draw(window);
 		}
 
 		window.display();
@@ -156,20 +152,13 @@ std::pair<Board*, Board*> Game::GetBoards()
 }
 
 Game::Game(sf::RenderWindow &wnd, sf::Font &titleFont, sf::Font &fnt) :
-	window(wnd), board1(new Board(50, 100)), board2(new Board(50, 100)), titleFont(titleFont), fnt(fnt),
-	restartTexture(0), exitTexture(0), randomTexture(0), acceptTexture(0), clearTexture(0)
+	window(wnd), board1(new Board(50, 100)), board2(new Board(50, 100)), titleFont(titleFont), fnt(fnt)
 {
 	board1->setFont(fnt), board2->setFont(fnt);
 
 	bg.setFillColor(blackColor), hider.setFillColor(sf::Color::Transparent);
 	bg.setSize({ 1280, 720 }), hider.setSize({ 1280, 670 });
 	hider.setPosition(0, 50);
-
-	initTexture(restartTexture, "data/restart.png", true);
-	initTexture(exitTexture, "data/exit.png", true);
-	initTexture(randomTexture, "data/random.png", true);
-	initTexture(acceptTexture, "data/accept.png", true);
-	initTexture(clearTexture, "data/clear.png", true);
 }
 
 void Game::resetShipNum(std::vector<sf::Text> &shipNum, std::vector<int> &countShips)
@@ -206,22 +195,13 @@ void Game::setBlocks(std::vector<sf::RectangleShape> &blocks)
 
 void Game::initPlayer(Board *board)
 {
-	const sf::Vector2f buttonSize = sf::Vector2f(122.0f, 71.0f);
+	const sf::Vector2f buttonSize = sf::Vector2f(200.0f, 71.0f);
+	sf::Font buttonFont;
+	buttonFont.loadFromFile("data/TitleFont.ttf");
 
-	sf::RectangleShape randomButton;
-	randomButton.setSize(buttonSize);
-	randomButton.setPosition(sf::Vector2f(700.0f, 500.0f));
-	randomButton.setTexture(randomTexture);
-
-	sf::RectangleShape clearButton;
-	clearButton.setSize(buttonSize);
-	clearButton.setPosition(sf::Vector2f(1000.0f, 500.0f));
-	clearButton.setTexture(clearTexture);
-
-	sf::RectangleShape acceptButton;
-	acceptButton.setSize(buttonSize);
-	acceptButton.setPosition(sf::Vector2f(850.0f, 600.0f));
-	acceptButton.setTexture(acceptTexture);
+	Button randomButton({ 700.0f, 500.0f }, buttonSize, buttonFont, "Random");
+	Button clearButton({ 1000.0f, 500.0f }, buttonSize, buttonFont, "Clear");
+	Button acceptButton({ 850.0f, 600.0f }, buttonSize, buttonFont, "Accept");
 
 	sf::Text name(board->getName(), titleFont);
 	name.setPosition(100, 10);
@@ -261,17 +241,17 @@ void Game::initPlayer(Board *board)
 				sf::Vector2f pos_float = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 				Vector2i pos(pos_float);
 
-				if (randomButton.getGlobalBounds().contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+				if (randomButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
 				{
 					board->RandomFill();
 					break;
 				}
-				if (board->getShipNum() == 10 && acceptButton.getGlobalBounds().contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+				if (board->getShipNum() == 10 && acceptButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
 				{
 					ready = true;
 					break;
 				}
-				if (clearButton.getGlobalBounds().contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+				if (clearButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
 				{
 					board->DeleteShips();
 					break;
@@ -323,10 +303,10 @@ void Game::initPlayer(Board *board)
 		window.draw(name);
 
 		if (board->getShipNum() == 10)
-			window.draw(acceptButton);
+			acceptButton.draw(window);
 
-		window.draw(randomButton);
-		window.draw(clearButton);
+		randomButton.draw(window);
+		clearButton.draw(window);
 
 		for (int i = 0; i < 10; ++i)
 			window.draw(blocks[i]);

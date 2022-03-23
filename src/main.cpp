@@ -9,6 +9,7 @@
 #include "Board.h"
 #include "Functions.h"
 #include "Online.h"
+#include "Button.h"
 
 #include <iostream>
 #include <vector>
@@ -355,6 +356,7 @@ int SelectConnectionType(sf::RenderWindow& wnd, sf::Font& fnt, sf::Font& titleFn
 
         sf::sleep(sf::milliseconds(40));
     }
+    return -1;
 }
 
 bool enter_name(RenderWindow& wnd, string text, sf::Font& fnt, sf::Font& titleFnt, string& result)
@@ -379,22 +381,8 @@ bool enter_name(RenderWindow& wnd, string text, sf::Font& fnt, sf::Font& titleFn
     title.setPosition((1280 - title.getLocalBounds().width) / 2.0f,
         720 / 5.0f);
 
-    sf::RectangleShape button;
-    button.setOutlineThickness(10);
-    button.setOutlineColor(blueColor);
-    button.setFillColor(sf::Color::Transparent);
-    button.setSize({ 300, 120 });
-    button.setPosition((1280 - button.getSize().x) / 2.0f,
-        (720 - button.getSize().y) / 2.0f * 1.4f);
-
-    sf::Text buttonOkString;
-    buttonOkString.setFont(titleFnt);
-    buttonOkString.setCharacterSize(50);
-    buttonOkString.setString("OK");
-    buttonOkString.setFillColor(blueColor);
-    buttonOkString.setStyle(sf::Text::Bold);
-    buttonOkString.setPosition(button.getGlobalBounds().left + (button.getSize().x - buttonOkString.getGlobalBounds().width) / 2.0f,
-        button.getGlobalBounds().top + (button.getSize().y - buttonOkString.getGlobalBounds().height) / 2.0f - 15);
+    Button okButton({ 1280 / 2.0f, 720 / 2.0f * 1.4f }, { 300, 120 }, titleFnt);
+    okButton.setText("OK");
 
     sf::Text txt;
     txt.setFont(fnt);
@@ -421,7 +409,7 @@ bool enter_name(RenderWindow& wnd, string text, sf::Font& fnt, sf::Font& titleFn
                 if (evnt.mouseButton.button == sf::Mouse::Left)
                 {
                     sf::Vector2f pos = wnd.mapPixelToCoords(sf::Mouse::getPosition(wnd));
-                    if (button.getGlobalBounds().contains(pos.x, pos.y))
+                    if (okButton.contains({ pos.x, pos.y }))
                         return 1;
                 }
                 break;
@@ -461,8 +449,7 @@ bool enter_name(RenderWindow& wnd, string text, sf::Font& fnt, sf::Font& titleFn
         wnd.draw(space);
         wnd.draw(txt);
         wnd.draw(title);
-        wnd.draw(button);
-        wnd.draw(buttonOkString);
+        okButton.draw(wnd);
         wnd.display();
 
         sf::sleep(sf::milliseconds(20 - clock.getElapsedTime().asMilliseconds()));
@@ -478,34 +465,16 @@ int menu(sf::RenderWindow& window)
     bg.setFillColor(blackColor);
     bg.setSize(sf::Vector2f(1280.0f, 720.0f));
 
-    sf::RectangleShape localButton, onlineButton, exitButton;
-
+    sf::Font buttonFont;
+    buttonFont.loadFromFile("data/TitleFont.ttf");
     const sf::Vector2f buttonSize = sf::Vector2f(244, 142);
+    Button localButton({ 1280 / 3.0f, 720 / 3.0f }, buttonSize, buttonFont);
+    Button onlineButton({ 1280 / 3.0f * 2.0f, 720 / 3.0f }, buttonSize, buttonFont);
+    Button exitButton({ 1280 / 2.0f, 720 / 3.0f * 2.0f }, buttonSize, buttonFont);
 
-    localButton.setSize(buttonSize);
-    onlineButton.setSize(buttonSize);
-    exitButton.setSize(buttonSize);
-
-    localButton.setPosition(1280 / 3.0f - buttonSize.x / 2.0f,
-        720 / 3.0f - buttonSize.y / 2.0f);
-    onlineButton.setPosition(1280 / 3.0f * 2.0f - buttonSize.x / 2.0f,
-        720 / 3.0f - buttonSize.y / 2.0f);
-    exitButton.setPosition(1280 / 2.0f - buttonSize.x / 2.0f,
-        720 / 3.0f * 2.0f - buttonSize.y / 2.0f);
-
-    sf::Texture* localTexture = new sf::Texture(), * onlineTexture = new sf::Texture(), * exitTexture = new sf::Texture();
-
-    localTexture->loadFromFile("data/local.png");
-    onlineTexture->loadFromFile("data/online.png");
-    exitTexture->loadFromFile("data/exit.png");
-
-    localTexture->setSmooth(true);
-    onlineTexture->setSmooth(true);
-    exitTexture->setSmooth(true);
-
-    localButton.setTexture(localTexture);
-    onlineButton.setTexture(onlineTexture);
-    exitButton.setTexture(exitTexture);
+    localButton.setText("Local");
+    onlineButton.setText("Online");
+    exitButton.setText("Exit");
 
     sf::Clock clock;
     while (window.isOpen())
@@ -532,11 +501,11 @@ int menu(sf::RenderWindow& window)
             case sf::Event::MouseButtonPressed:
                 sf::Vector2f pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-                if (exitButton.getGlobalBounds().contains(pos))
+                if (exitButton.contains(pos))
                     return 0;
-                else if (localButton.getGlobalBounds().contains(pos))
+                else if (localButton.contains(pos))
                     return 1;
-                else if (onlineButton.getGlobalBounds().contains(pos))
+                else if (onlineButton.contains(pos))
                     return 2;
 
                 break;
@@ -546,19 +515,15 @@ int menu(sf::RenderWindow& window)
         window.clear();
 
         window.draw(bg);
-        window.draw(localButton);
-        window.draw(onlineButton);
-        window.draw(exitButton);
+        localButton.draw(window);
+        onlineButton.draw(window);
+        exitButton.draw(window);
 
         window.display();
 
         sf::sleep(sf::milliseconds(20 - clock.getElapsedTime().asMilliseconds()));
         clock.restart();
     }
-
-    delete localTexture;
-    delete onlineTexture;
-    delete exitTexture;
 
     return 0;
 }

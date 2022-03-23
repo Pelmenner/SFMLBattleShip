@@ -3,6 +3,7 @@
 #include"SFML/Graphics.hpp"
 #include "Board.h"
 #include "Connection.h"
+#include "Button.h"
 
 class Game
 {
@@ -14,12 +15,6 @@ private:
 	sf::Font &fnt;
 	sf::RectangleShape hider;
 	sf::RectangleShape bg;
-
-	sf::Texture *restartTexture;
-	sf::Texture *exitTexture;
-	sf::Texture *randomTexture;
-	sf::Texture *acceptTexture;
-	sf::Texture *clearTexture;
 
 public:
 	Game(sf::RenderWindow &wnd, sf::Font &titleFont, sf::Font &fnt);
