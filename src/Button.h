@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
-class Button
+class Button : public sf::Drawable
 {
 public:
     Button(const std::string& texturePath = "data/button.png");
@@ -12,9 +12,11 @@ public:
 
     bool contains(const sf::Vector2f& mousePos);
     void setText(const std::string& newText);
-    void draw(sf::RenderWindow& window) const;
     void setPosition(const sf::Vector2f position);
     void setSize(const sf::Vector2f size);
+
+protected:
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
     sf::Texture* texture;

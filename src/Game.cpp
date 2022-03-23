@@ -133,8 +133,8 @@ bool Game::playLocal()
 
 		if (finished)
 		{
-			replayButton.draw(window);
-			exitButton.draw(window);
+			window.draw(replayButton);
+			window.draw(exitButton);
 		}
 
 		window.display();
@@ -303,10 +303,10 @@ void Game::initPlayer(Board *board)
 		window.draw(name);
 
 		if (board->getShipNum() == 10)
-			acceptButton.draw(window);
+			window.draw(acceptButton);
 
-		randomButton.draw(window);
-		clearButton.draw(window);
+		window.draw(randomButton);
+		window.draw(clearButton);
 
 		for (int i = 0; i < 10; ++i)
 			window.draw(blocks[i]);

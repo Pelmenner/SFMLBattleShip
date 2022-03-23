@@ -43,16 +43,16 @@ void Button::setText(const std::string& newText)
     updateTextPosition();
 }
 
+void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    target.draw(shape, states);
+    target.draw(text, states);
+}
+
 void Button::updateTextPosition()
 {
     text.setPosition(shape.getGlobalBounds().left + (shape.getSize().x - text.getGlobalBounds().width) / 2.0f,
         shape.getGlobalBounds().top + (shape.getSize().y - text.getGlobalBounds().height) / 2.0f - 15);
-}
-
-void Button::draw(sf::RenderWindow& window) const
-{
-    window.draw(shape);
-    window.draw(text);
 }
 
 void Button::setPosition(const sf::Vector2f position)

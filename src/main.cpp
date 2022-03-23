@@ -449,7 +449,7 @@ bool enter_name(RenderWindow& wnd, string text, sf::Font& fnt, sf::Font& titleFn
         wnd.draw(space);
         wnd.draw(txt);
         wnd.draw(title);
-        okButton.draw(wnd);
+        wnd.draw(okButton);
         wnd.display();
 
         sf::sleep(sf::milliseconds(20 - clock.getElapsedTime().asMilliseconds()));
@@ -515,9 +515,9 @@ int menu(sf::RenderWindow& window)
         window.clear();
 
         window.draw(bg);
-        localButton.draw(window);
-        onlineButton.draw(window);
-        exitButton.draw(window);
+        window.draw(localButton);
+        window.draw(onlineButton);
+        window.draw(exitButton);
 
         window.display();
 

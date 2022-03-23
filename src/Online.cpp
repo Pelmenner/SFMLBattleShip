@@ -1,21 +1,15 @@
 #include "Online.h"
 #include "Functions.h"
+#include "Button.h"
 
 Online::Online(sf::RenderWindow &wnd, sf::Font &titleFnt, sf::Font &fnt, Connection *mult) :
-	wnd(wnd), local(new Board(50, 100)), opponent(new EnemyBoard(50, 100)), titleFnt(titleFnt), fnt(fnt), mult(mult),
-	restartTexture(nullptr), exitTexture(nullptr), randomTexture(nullptr), acceptTexture(nullptr), clearTexture(nullptr)
+	wnd(wnd), local(new Board(50, 100)), opponent(new EnemyBoard(50, 100)), titleFnt(titleFnt), fnt(fnt), mult(mult)
 {
 	local->setFont(fnt);
 	opponent->SetFont(fnt);
 
 	bg.setFillColor(blackColor);
 	bg.setSize(sf::Vector2f(wnd.getSize()));
-
-	initTexture(restartTexture, "data/restart.png", true);
-	initTexture(exitTexture, "data/exit.png", true);
-	initTexture(randomTexture, "data/random.png", true);
-	initTexture(acceptTexture, "data/accept.png", true);
-	initTexture(clearTexture, "data/clear.png", true);
 }
 
 void Online::SetShipNum(std::vector<sf::Text> &shipNum, sf::Font &fnt)
@@ -54,22 +48,12 @@ void Online::InitLocal(const std::string &local_name)
 {
 	local->setName(local_name);
 	
-	const sf::Vector2f buttonSize = sf::Vector2f(122.0f, 71.0f);
+	const sf::Vector2f buttonSize = sf::Vector2f(200.0f, 71.0f);
+	const sf::Font& buttonFont = titleFnt;
 
-	sf::RectangleShape randomButton;
-	randomButton.setSize(buttonSize);
-	randomButton.setPosition(sf::Vector2f(700.0f, 500.0f));
-	randomButton.setTexture(randomTexture);
-
-	sf::RectangleShape clearButton;
-	clearButton.setSize(buttonSize);
-	clearButton.setPosition(sf::Vector2f(1000.0f, 500.0f));
-	clearButton.setTexture(clearTexture);
-
-	sf::RectangleShape acceptButton;
-	acceptButton.setSize(buttonSize);
-	acceptButton.setPosition(sf::Vector2f(850.0f, 600.0f));
-	acceptButton.setTexture(acceptTexture);
+	Button randomButton({ 700.0f, 500.0f }, buttonSize, buttonFont, "Random");
+	Button clearButton({ 1000.0f, 500.0f }, buttonSize, buttonFont, "Clear");
+	Button acceptButton({ 850.0f, 600.0f }, buttonSize, buttonFont, "Accept");
 
 	sf::Text name(local_name, titleFnt);
 	name.setPosition(100, 10);
@@ -99,17 +83,17 @@ void Online::InitLocal(const std::string &local_name)
 				sf::Vector2f pos_float = wnd.mapPixelToCoords(sf::Mouse::getPosition(wnd));
 				sf::Vector2i pos(pos_float);
 
-				if (randomButton.getGlobalBounds().contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+				if (randomButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
 				{
 					local->RandomFill();
 					break;
 				}
-				if (local->getShipNum() == 10 && acceptButton.getGlobalBounds().contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+				if (local->getShipNum() == 10 && acceptButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
 				{
 					ready = true;
 					break;
 				}
-				if (clearButton.getGlobalBounds().contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+				if (clearButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
 				{
 					local->DeleteShips();
 					break;
@@ -187,16 +171,10 @@ void Online::SetOpponentName(const std::string &name)
 bool Online::Play(int localMove)
 {
 	const sf::Vector2f buttonSize = sf::Vector2f(122.0f, 71.0f);
+	const sf::Font& buttonFont = titleFnt;
 
-	sf::RectangleShape replayButton;
-	replayButton.setSize(buttonSize);
-	replayButton.setPosition(sf::Vector2f(800.0f, 630.0f));
-	replayButton.setTexture(restartTexture);
-
-	sf::RectangleShape exitButton;
-	exitButton.setSize(buttonSize);
-	exitButton.setPosition(sf::Vector2f(1000.0f, 630.0f));
-	exitButton.setTexture(exitTexture);
+	Button replayButton({ 800.0f, 630.0f }, buttonSize, buttonFont, "Replay");
+	Button exitButton({ 1000.0f, 630.0f }, buttonSize, buttonFont, "Exit");
 
 	sf::RectangleShape bg;
 	bg.setFillColor(blackColor);
@@ -256,9 +234,9 @@ bool Online::Play(int localMove)
 				sf::Vector2i pos(pos_float);
 				if (finished)
 				{
-					if (exitButton.getGlobalBounds().contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+					if (exitButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
 						return false;
-					if (replayButton.getGlobalBounds().contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+					if (replayButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
 						return true;
 					break;
 				}
@@ -364,13 +342,4 @@ bool Online::Play(int localMove)
 	}
 
 	return false;
-}
-
-Online::~Online()
-{
-	delete restartTexture;
-	delete exitTexture;
-	delete randomTexture;
-	delete acceptTexture;
-	delete clearTexture;
 }

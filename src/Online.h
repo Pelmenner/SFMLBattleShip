@@ -19,15 +19,8 @@ private:
 	sf::Font &fnt;
 	sf::RectangleShape bg;
 
-	sf::Texture *restartTexture;
-	sf::Texture *exitTexture;
-	sf::Texture *randomTexture;
-	sf::Texture *acceptTexture;
-	sf::Texture *clearTexture;
-
 public:
 	Online(sf::RenderWindow &wnd, sf::Font &titleFnt, sf::Font &fnt, Connection *mult);
-	~Online();
 
 	void SetShipNum(std::vector <sf::Text> &shipNum, sf::Font &fnt);
 	void SetCells(std::vector <sf::RectangleShape> &cells);
