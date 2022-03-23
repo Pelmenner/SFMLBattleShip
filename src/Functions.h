@@ -3,7 +3,6 @@
 #include "SFML/Graphics.hpp"
 #include "SFML/Network.hpp"
 #include <string>
-#include <Windows.h>
 #include <cmath>
 
 constexpr float dimRatio = 16.0f / 9.0f;
