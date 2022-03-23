@@ -2,14 +2,14 @@
 #include "Functions.h"
 #include "Button.h"
 
-Online::Online(sf::RenderWindow &wnd, sf::Font &titleFnt, sf::Font &fnt, Connection *mult) :
+Online::Online(sf::RenderWindow& wnd, sf::Font& titleFnt, sf::Font& fnt, Connection* mult) :
 	wnd(wnd), local(new Board(50, 100)), opponent(new EnemyBoard(50, 100)), titleFnt(titleFnt), fnt(fnt), mult(mult)
 {
 	local->setFont(fnt);
 	opponent->SetFont(fnt);
 
 	bg.setFillColor(blackColor);
-	bg.setSize(sf::Vector2f(wnd.getSize()));
+	bg.setSize({ 1280.0f, 720.0f });
 }
 
 void Online::SetShipNum(std::vector<sf::Text> &shipNum, sf::Font &fnt)
@@ -173,8 +173,8 @@ bool Online::Play(int localMove)
 	const sf::Vector2f buttonSize = sf::Vector2f(122.0f, 71.0f);
 	const sf::Font& buttonFont = titleFnt;
 
-	Button replayButton({ 800.0f, 630.0f }, buttonSize, buttonFont, "Replay");
-	Button exitButton({ 1000.0f, 630.0f }, buttonSize, buttonFont, "Exit");
+	Button replayButton({ 800.0f, 665.0f }, buttonSize, buttonFont, "Replay");
+	Button exitButton({ 1000.0f, 665.0f }, buttonSize, buttonFont, "Exit");
 
 	sf::RectangleShape bg;
 	bg.setFillColor(blackColor);
