@@ -4,14 +4,16 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <string>
 
 class Field : public sf::Drawable
 {
 public:
-    EnemyBoard(sf::Vector2i position, const sf::Font& fnt);
+    Field(sf::Vector2i position, const sf::Font& fnt);
 
     void setName(const std::string& name);
     void setPosition(sf::Vector2i position);
+    void clearCells();
 
     bool hasLost() const;
     std::string getName() const;
