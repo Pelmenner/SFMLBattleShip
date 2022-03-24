@@ -20,6 +20,7 @@ set(SOURCES
     src/Game.cpp
     src/main.cpp
     src/Online.cpp
+    src/RemoteField.cpp
 )
 
 project(BattleShip VERSION 1.0)

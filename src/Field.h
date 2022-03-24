@@ -27,6 +27,7 @@ protected:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
     int surroundDestroyed(sf::Vector2i pos);
     static void getNeighbours(sf::Vector2i pos, std::vector<sf::Vector2i>& res);
+    std::array<int, 5> shipsCount;
 
 private:
     sf::Vector2f position;
@@ -35,7 +36,6 @@ private:
     std::array<sf::Text, 10> letters;
     std::array<sf::Text, 10> numbers;
     const sf::Font& font;
-    std::array<int, 5> shipsCount;
 
     void dfs(sf::Vector2i pos, sf::Vector2i prev, int& len);
     void updateLayout();
