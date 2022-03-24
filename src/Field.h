@@ -3,25 +3,40 @@
 #include "Colors.h"
 
 #include <SFML/Graphics.hpp>
-#include <vector>
+
+#include <numeric>
 #include <string>
+#include <vector>
+#include <array>
 
 class Field : public sf::Drawable
 {
 public:
-    Field(sf::Vector2i position, const sf::Font& fnt);
+    Field(sf::Vector2f pos, const sf::Font& fnt);
 
     void setName(const std::string& name);
-    void setPosition(sf::Vector2i position);
+    void setPosition(sf::Vector2f pos);
     void clearCells();
 
     bool hasLost() const;
-    std::string getName() const;
-    sf::RectangleShape& operator[](const sf::Vector2i& pos);
+    const std::string& getName() const;
+    sf::RectangleShape& operator[](sf::Vector2i pos);
     std::vector<sf::RectangleShape>& operator[](int i);
 
 protected:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
     int surroundDestroyed(sf::Vector2i pos);
     static void getNeighbours(sf::Vector2i pos, std::vector<sf::Vector2i>& res);
+
+private:
+    sf::Vector2f position;
+    sf::Text name;
+    std::vector<std::vector<sf::RectangleShape>> cells;
+    std::array<sf::Text, 10> letters;
+    std::array<sf::Text, 10> numbers;
+    const sf::Font& font;
+    std::array<int, 5> shipsCount;
+
+    void dfs(sf::Vector2i pos, sf::Vector2i prev, int& len);
+    void updateLayout();
 };
