@@ -18,8 +18,10 @@ set(SOURCES
     src/Field.cpp
     src/Functions.cpp
     src/Game.cpp
+    src/LocalField.cpp
     src/main.cpp
     src/Online.cpp
+    src/RandomGenerator.cpp
     src/RemoteField.cpp
 )
 

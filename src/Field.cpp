@@ -70,6 +70,11 @@ sf::RectangleShape& Field::operator[](sf::Vector2i pos)
     return cells[pos.x][pos.y];
 }
 
+const sf::RectangleShape& Field::operator[](sf::Vector2i pos) const
+{
+    return cells[pos.x][pos.y];
+}
+
 std::vector<sf::RectangleShape>& Field::operator[](int i)
 {
     return cells[i];
