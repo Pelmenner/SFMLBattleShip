@@ -13,6 +13,7 @@ void LocalField::erase(sf::Vector2i pos)
     if (it == ships.end())
         return;
 
+    --shipsCount[it->length];
     ships.erase(it);
     revealPlacement();
 }
@@ -147,6 +148,8 @@ LocalField::Ship::Ship(sf::Vector2i start, sf::Vector2i end)
     direction = end - start;
     if (length > 1)
         direction /= length - 1;
+    else
+        direction = { 1, 0 };
 }
 
 bool LocalField::Ship::contains(sf::Vector2i pos) const
@@ -156,9 +159,9 @@ bool LocalField::Ship::contains(sf::Vector2i pos) const
         return false;
     if (direction.y == 0 && diff.y != 0)
         return false;
-    if (direction.x != 0 && diff.x < 0)
+    if (direction.x != 0 && (diff.x < 0 || diff.x >= length))
         return false;
-    if (direction.y != 0 && diff.y < 0)
+    if (direction.y != 0 && (diff.y < 0 || diff.y >= length))
         return false;
     return true;
 }
@@ -185,7 +188,10 @@ bool LocalField::checkShipPosition(const Ship& ship) const
     std::vector<sf::Vector2i> requiredCells;
     const sf::Vector2i end = ship.position + ship.direction * ship.length;
     for (sf::Vector2i pos = ship.position; pos != end; pos += ship.direction)
+    {
         getNeighbours(pos, requiredCells);
+        requiredCells.push_back(pos);
+    }
     for (const sf::Vector2i& pos : requiredCells)
         for (const Ship& placedShip : ships)
             if (placedShip.contains(pos))
