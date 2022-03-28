@@ -19,7 +19,7 @@ public:
     void clearCells();
 
     bool hasLost() const;
-    const std::string& getName() const;
+    std::string getName() const;
     sf::RectangleShape& operator[](sf::Vector2i pos);
     const sf::RectangleShape& operator[](sf::Vector2i pos) const;
     std::vector<sf::RectangleShape>& operator[](int i);

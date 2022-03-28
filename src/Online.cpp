@@ -1,26 +1,13 @@
-#include "Online.h"
 #include "Functions.h"
 #include "Button.h"
+#include "Online.h"
 
 Online::Online(sf::RenderWindow& wnd, sf::Font& titleFnt, sf::Font& fnt, Connection* mult) :
-	wnd(wnd), local(new Board(50, 100)), opponent(new EnemyBoard(50, 100)), titleFnt(titleFnt), fnt(fnt), mult(mult)
+	Game(wnd, titleFnt, fnt), 
+	local(new LocalField({ 50, 100 }, fnt)),
+	opponent(new RemoteField({ 50, 100 }, fnt)),
+	mult(mult), localMove(0)
 {
-	local->setFont(fnt);
-	opponent->SetFont(fnt);
-
-	bg.setFillColor(blackColor);
-	bg.setSize({ 1280.0f, 720.0f });
-}
-
-void Online::SetShipNum(std::vector<sf::Text> &shipNum, sf::Font &fnt)
-{
-	for (unsigned int i = 0; i < shipNum.size(); ++i)
-	{
-		shipNum[i].setFont(fnt);
-		shipNum[i].setFillColor(sf::Color::White);
-		shipNum[i].setPosition(700.0f, 100.0f + (float) i * 100.0f);
-		shipNum[i].setString(std::to_string(4 - i) + " x ");
-	}
 }
 
 void Online::SetCells(std::vector<sf::RectangleShape> &cells)
@@ -38,140 +25,41 @@ void Online::SetCells(std::vector<sf::RectangleShape> &cells)
 			cells[(i * (i + 1)) / 2 + j].setPosition(775.0f + (float) j * 50.0f, 100.0f + (float) i * 100.0f);
 }
 
-void Online::ResetShipNum(std::vector<sf::Text> &shipNum, std::vector<int> &countShips)
-{
-	for (unsigned int i = 0; i < shipNum.size(); ++i)
-		shipNum[i].setString(std::to_string(4 - i - countShips[i]) + " x ");
-}
-
 void Online::InitLocal(const std::string &local_name)
 {
 	local->setName(local_name);
-	
-	const sf::Vector2f buttonSize = sf::Vector2f(200.0f, 71.0f);
-	const sf::Font& buttonFont = titleFnt;
-
-	Button randomButton({ 700.0f, 500.0f }, buttonSize, buttonFont, "Random");
-	Button clearButton({ 1000.0f, 500.0f }, buttonSize, buttonFont, "Clear");
-	Button acceptButton({ 850.0f, 600.0f }, buttonSize, buttonFont, "Accept");
-
-	sf::Text name(local_name, titleFnt);
-	name.setPosition(100, 10);
-	name.setFillColor(nameColor);
-
-	bool drawing = false, ready = false;
-	sf::Vector2i buf_pos(0, 0);
-
-	std::vector <sf::Text> shipNum(4);
-	SetShipNum(shipNum, titleFnt);
-	std::vector <sf::RectangleShape> cells(10);
-	SetCells(cells);
-
-	sf::Clock clock;
-
-	while (wnd.isOpen() && !ready)
-	{
-		sf::Event evnt;
-		while (wnd.pollEvent(evnt))
-		{
-			switch (evnt.type)
-			{
-			case sf::Event::Closed:
-				wnd.close();
-				break;
-			case sf::Event::MouseButtonPressed:
-				sf::Vector2f pos_float = wnd.mapPixelToCoords(sf::Mouse::getPosition(wnd));
-				sf::Vector2i pos(pos_float);
-
-				if (randomButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
-				{
-					local->RandomFill();
-					break;
-				}
-				if (local->getShipNum() == 10 && acceptButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
-				{
-					ready = true;
-					break;
-				}
-				if (clearButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
-				{
-					local->DeleteShips();
-					break;
-				}
-
-				if (pos.y < 100 || pos.y > 600)
-					break;
-				if (pos.x > 550 || pos.x < 50)
-					break;
-
-				pos.x = (pos.x - 50) / 50;
-				pos.y = (pos.y - 100) / 50;
-
-				if (evnt.mouseButton.button == sf::Mouse::Left)
-				{
-					if (!drawing)
-					{
-						if (pos.x >= 0 && pos.x < 10 && pos.y >= 0 && pos.y < 10)
-						{
-							if ((*local)[pos].getFillColor() == blackColor)
-							{
-								(*local)[pos].setFillColor(yellowColor);
-								drawing = true;
-							}
-						}
-
-						buf_pos = pos;
-					}
-					else
-					{
-
-						if (!(pos.x >= 0 && pos.x < 10 && pos.y >= 0 && pos.y < 10 && local->addShip(buf_pos, pos)))
-							(*local)[buf_pos].setFillColor(blackColor);
-						drawing = false;
-					}
-				}
-				else if (evnt.mouseButton.button == sf::Mouse::Right)
-				{
-					local->erase(pos);
-				}
-			}
-		}
-
-		ResetShipNum(shipNum, local->getCountShips());
-
-		wnd.clear();
-
-		wnd.draw(bg);
-		wnd.draw(name);
-
-		if (local->getShipNum() == 10)
-			wnd.draw(acceptButton);
-
-		wnd.draw(randomButton);
-		wnd.draw(clearButton);
-
-		for (int i = 0; i < 10; ++i)
-			wnd.draw(cells[i]);
-		for (int i = 0; i < 4; ++i)
-			wnd.draw(shipNum[i]);
-
-		local->draw(wnd);
-		wnd.display();
-
-		sf::sleep(sf::milliseconds(40 - clock.getElapsedTime().asMilliseconds()));
-		clock.restart();
-	}
+	initPlayer(local);
 }
 
 void Online::SetOpponentName(const std::string &name)
 {
-	opponent->SetName(name);
+	opponent->setName(name);
 }
 
-bool Online::Play(int localMove)
+void Online::initPlayers()
+{
+	InitLocal(local->getName());
+}
+
+void Online::setLocalMove(int move)
+{
+	localMove = move;
+}
+
+void Online::setLocalName(const std::string& name)
+{
+	local->setName(name);
+}
+
+std::pair<Field*, Field*> Online::getFields() const
+{
+	return { local, opponent };
+}
+
+bool Online::play()
 {
 	const sf::Vector2f buttonSize = sf::Vector2f(122.0f, 71.0f);
-	const sf::Font& buttonFont = titleFnt;
+	const sf::Font& buttonFont = titleFont;
 
 	Button replayButton({ 800.0f, 665.0f }, buttonSize, buttonFont, "Replay");
 	Button exitButton({ 1000.0f, 665.0f }, buttonSize, buttonFont, "Exit");
@@ -183,25 +71,25 @@ bool Online::Play(int localMove)
 	const std::string add = "'s turn";
 	sf::Text turn;
 	if (localMove == 0)
-		setText(turn, { 20.0f, 680.0f }, nameColor, titleFnt, local->getName() + add);
+		setText(turn, { 20.0f, 680.0f }, nameColor, titleFont, local->getName() + add);
 	else
-		setText(turn, { 20.0f, 680.0f }, nameColor, titleFnt, opponent->GetName() + add);
+		setText(turn, { 20.0f, 680.0f }, nameColor, titleFont, opponent->getName() + add);
 
 	sf::Text name1, name2;
 	if (localMove == 0)
 	{
-		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, titleFnt, local->getName());
-		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, titleFnt, opponent->GetName());
+		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, titleFont, local->getName());
+		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, titleFont, opponent->getName());
 	}
 	else
 	{
-		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, titleFnt, opponent->GetName());
-		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, titleFnt, local->getName());
+		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, titleFont, opponent->getName());
+		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, titleFont, local->getName());
 	}
 
 	sf::Text arrow;
 	arrow.setOrigin(17.5f, 17.5f);
-	setText(arrow, { 600.0f, 350.0f }, nameColor, titleFnt, "=>");
+	setText(arrow, { 600.0f, 350.0f }, nameColor, titleFont, "=>");
 
 	int shot = 0;
 	bool finished = false;
@@ -212,25 +100,25 @@ bool Online::Play(int localMove)
 			state[i][j] = (*local)[i][j].getFillColor() == redColor;
 
 	if (localMove == 0)
-		opponent->ResetPosition(700, 100);
+		opponent->setPosition({ 700, 100 });
 	else
-		local->resetPosition(700, 100);
+		local->setPosition({ 700, 100 });
 	local->clearCells();
 
 	sf::Clock clock;
 	bool sent = false;
-	while (wnd.isOpen())
+	while (window.isOpen())
 	{
 		sf::Event evnt;
-		while (wnd.pollEvent(evnt))
+		while (window.pollEvent(evnt))
 		{
 			switch (evnt.type)
 			{
 			case sf::Event::Closed:
-				wnd.close();
+				window.close();
 				break;
 			case sf::Event::MouseButtonPressed:
-				sf::Vector2f pos_float = wnd.mapPixelToCoords(sf::Mouse::getPosition(wnd));
+				sf::Vector2f pos_float = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 				sf::Vector2i pos(pos_float);
 				if (finished)
 				{
@@ -264,12 +152,12 @@ bool Online::Play(int localMove)
 					while (!is_received)
 						is_received = mult->ReceiveResponse(hit);
 
-					opponent->SetHit(pos, hit);
+					opponent->setHit(pos, hit);
 					if (hit == 0)
 					{
 						++shot;
 						arrow.rotate(180.0f);
-						turn.setString(opponent->GetName() + add);
+						turn.setString(opponent->getName() + add);
 					}
 					else break;
 				}
@@ -299,43 +187,43 @@ bool Online::Play(int localMove)
 		if (local->hasLost() && !sent)
 		{
 			finished = true;
-			turn.setString(opponent->GetName() + " won!");
+			turn.setString(opponent->getName() + " won!");
 			bool res = false;
 			while (!res)
-				res = mult->ReceiveBoard(*opponent);
+				res = mult->ReceiveField(*opponent);
 			sent = true;
 		}
-		if (opponent->HasLost() && !sent)
+		if (opponent->hasLost() && !sent)
 		{
 			finished = true;
 			turn.setString(local->getName() + " won!");
 			bool res = false;
 			while (!res)
-				res = mult->SendBoard(state);
+				res = mult->SendField(state);
 			sent = true;
-			local->showAlive();
+			local->showRemainingShips();
 		}
 
-		wnd.clear();
+		window.clear();
 
-		wnd.draw(bg);
-		wnd.draw(name1);
-		wnd.draw(name2);
-		wnd.draw(turn);
+		window.draw(bg);
+		window.draw(name1);
+		window.draw(name2);
+		window.draw(turn);
 
-		local->draw(wnd);
-		opponent->Draw(wnd);
-		wnd.draw(arrow);
+		window.draw(*local);
+		window.draw(*opponent);
+		window.draw(arrow);
 
 		if (!finished)
-			local->DrawShipBorders(wnd);
+			local->showShipBorders();
 		else
 		{
-			wnd.draw(exitButton);
-			wnd.draw(replayButton);
+			window.draw(exitButton);
+			window.draw(replayButton);
 		}
 
-		wnd.display();
+		window.display();
 
 		sf::sleep(sf::milliseconds(20 - clock.getElapsedTime().asMilliseconds()));
 		clock.restart();

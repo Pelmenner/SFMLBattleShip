@@ -4,8 +4,7 @@
 #include <SFML/System.hpp>
 #include <string>
 
-#include "Board.h"
-#include "EnemyBoard.h"
+#include "RemoteField.h"
 
 class Connection
 {
@@ -28,8 +27,8 @@ public:
 	bool SendResponse(int hit);
 	bool ReceiveResponse(int &hit);
 
-	bool SendBoard(int state[10][10]);
-	bool ReceiveBoard(EnemyBoard &b);
+	bool SendField(int state[10][10]);
+	bool ReceiveField(RemoteField &b);
 
 	bool ReceiveTurn(int &turn);
 

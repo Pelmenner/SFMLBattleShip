@@ -60,7 +60,7 @@ bool Field::hasLost() const
     return true;
 }
 
-const std::string& Field::getName() const
+std::string Field::getName() const
 {
     return name.getString().toAnsiString();
 }

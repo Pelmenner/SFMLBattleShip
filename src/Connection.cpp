@@ -174,7 +174,7 @@ bool Connection::ReceiveResponse(int &hit)
 	}
 }
 
-bool Connection::SendBoard(int state[10][10])
+bool Connection::SendField(int state[10][10])
 {
 	if (!connected)
 		return false;
@@ -187,7 +187,7 @@ bool Connection::SendBoard(int state[10][10])
 	return client.send(pkt) == sf::Socket::Done;
 }
 
-bool Connection::ReceiveBoard(EnemyBoard &b)
+bool Connection::ReceiveField(RemoteField &b)
 {
 	if (!connected)
 		return false;

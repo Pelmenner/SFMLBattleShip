@@ -144,7 +144,9 @@ LocalField::Ship::Ship(sf::Vector2i start, sf::Vector2i end)
     length = (end.x - start.x) + (end.y - start.y) + 1;
     health = length;
     position = start;
-    direction = (end - start) / ((end.x - start.x) + (end.y - start.y));
+    direction = end - start;
+    if (length > 1)
+        direction /= length - 1;
 }
 
 bool LocalField::Ship::contains(sf::Vector2i pos) const

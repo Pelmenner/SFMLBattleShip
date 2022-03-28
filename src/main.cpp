@@ -1,19 +1,17 @@
-#include "SFML/Graphics.hpp"
-#include "SFML/Network.hpp"
-#include "SFML/System.hpp"
-#include "SFML/Window.hpp"
-#include "SFML/Audio.hpp"
-
-#include "Game.h"
 #include "Connection.h"
-#include "Board.h"
 #include "Functions.h"
-#include "Online.h"
 #include "Button.h"
+#include "Online.h"
+#include "Local.h"
+
+#include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
 
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 
 #pragma comment (linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
@@ -59,11 +57,6 @@ int main()
 
         if (choice == 1)
         {
-            sf::RectangleShape bg, hider;
-            bg.setFillColor(blackColor), hider.setFillColor(sf::Color::Transparent);
-            bg.setSize({ 1280, 720 }), hider.setSize({ 1280, 670 });
-            hider.setPosition(0, 50);
-
             string name1, name2;
             if (!enter_name(wnd, "Enter first player's name: ", fnt, titleFnt, name1))
                 break;
@@ -74,12 +67,12 @@ int main()
             bool res = true;
             while (res)
             {
-                Game game(wnd, titleFnt, fnt);
+                Local game(wnd, titleFnt, fnt);
                 game.setNames(name1, name2);
 
                 game.initPlayers();
 
-                res = game.playLocal();
+                res = game.play();
             }
         }
         else if (choice == 2)
@@ -108,7 +101,8 @@ int main()
                         continue;
 
                     Online game(wnd, titleFnt, fnt, &session);
-                    game.InitLocal(nickname);
+                    game.setLocalName(nickname);
+                    game.initPlayers();
                     session.SendName(nickname);
                     std::string opponent = "";
                     res = WaitOpponent(wnd, &session, fnt, opponent);
@@ -116,7 +110,8 @@ int main()
                         return 0;
                     game.SetOpponentName(opponent);
 
-                    ret = game.Play(0);
+                    game.setLocalMove(0);
+                    ret = game.play();
 
                     session.Disconnect();
                 }
@@ -138,29 +133,8 @@ int main()
                         return 0;
                     game.SetOpponentName(opponent);
 
-                    ret = game.Play(1);
-
-                    session.Disconnect();
-                }
-                else
-                {
-                    if (!session.ActiveConnection(server_ip))
-                        continue;
-
-                    int local_turn = 0;
-                    if (!session.ReceiveTurn(local_turn))
-                        continue;
-
-                    Online game(wnd, titleFnt, fnt, &session);
-                    game.InitLocal(nickname);
-                    session.SendName(nickname);
-                    std::string opponent = "";
-                    int res = WaitOpponent(wnd, &session, fnt, opponent);
-                    if (res == 0)
-                        return 0;
-                    game.SetOpponentName(opponent);
-
-                    ret = game.Play(local_turn);
+                    game.setLocalMove(1);
+                    ret = game.play();
 
                     session.Disconnect();
                 }
@@ -325,6 +299,7 @@ int SelectConnectionType(sf::RenderWindow& wnd, sf::Font& fnt, sf::Font& titleFn
             case sf::Event::KeyPressed:
                 if (evnt.key.code == sf::Keyboard::Escape)
                     return 4;
+                break;
             case sf::Event::MouseButtonPressed:
                 if (evnt.mouseButton.button == sf::Mouse::Left)
                 {
@@ -333,8 +308,6 @@ int SelectConnectionType(sf::RenderWindow& wnd, sf::Font& fnt, sf::Font& titleFn
                         return 1;
                     if (button_join.getGlobalBounds().contains(pos))
                         return 2;
-                    /*if (button_server.getGlobalBounds().contains(pos))
-                        return 3;*/
                 }
             }
         }

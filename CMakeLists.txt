@@ -11,13 +11,14 @@ set(RESOURCES
 )
 
 set(SOURCES
-    src/Board.cpp
+    
     src/Button.cpp
     src/Connection.cpp
-    src/EnemyBoard.cpp
+    
     src/Field.cpp
     src/Functions.cpp
     src/Game.cpp
+    src/Local.cpp
     src/LocalField.cpp
     src/main.cpp
     src/Online.cpp
