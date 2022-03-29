@@ -129,8 +129,9 @@ void Game::Initializer::processEvent(sf::Event& event, sf::RenderWindow& window)
         }
         else if (event.mouseButton.button == sf::Mouse::Right)
         {
+            if (drawing)
+                (*field)[buf_pos].setFillColor(blackColor);
             drawing = false;
-            (*field)[buf_pos].setFillColor(blackColor);
             field->erase(pos);
         }
     }
