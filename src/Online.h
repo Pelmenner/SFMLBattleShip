@@ -32,4 +32,3 @@ private:
     Connection* mult;
     int localMove;
 };
-
