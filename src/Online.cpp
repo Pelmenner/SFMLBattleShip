@@ -64,10 +64,6 @@ bool Online::play()
 	Button replayButton({ 800.0f, 665.0f }, buttonSize, buttonFont, "Replay");
 	Button exitButton({ 1000.0f, 665.0f }, buttonSize, buttonFont, "Exit");
 
-	sf::RectangleShape bg;
-	bg.setFillColor(blackColor);
-	bg.setSize(sf::Vector2f(1280.0f, 720.0f));
-
 	const std::string add = "'s turn";
 	sf::Text turn;
 	if (localMove == 0)
@@ -204,9 +200,8 @@ bool Online::play()
 			local->showRemainingShips();
 		}
 
-		window.clear();
+		window.clear(blackColor);
 
-		window.draw(bg);
 		window.draw(name1);
 		window.draw(name2);
 		window.draw(turn);

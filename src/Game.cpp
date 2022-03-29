@@ -3,9 +3,8 @@
 #include "Game.h"
 
 Game::Game(sf::RenderWindow& wnd, sf::Font& titleFont, sf::Font& fnt) :
-    window(wnd), titleFont(titleFont), font(fnt), background({ 1280, 720 })
+    window(wnd), titleFont(titleFont), font(fnt)
 {
-    background.setFillColor(blackColor);
 }
 
 void Game::setShipNum(std::vector<sf::Text>& shipNum, sf::Font& fnt)
@@ -51,12 +50,8 @@ void Game::initPlayer(LocalField* field)
 
         initializer.resetShipNum();
 
-        window.clear();
-        
-
-        window.draw(background);
+        window.clear(blackColor);
         window.draw(initializer);
-
         window.display();
 
         sf::sleep(sf::milliseconds(40 - clock.getElapsedTime().asMilliseconds()));
@@ -135,6 +130,7 @@ void Game::Initializer::processEvent(sf::Event& event, sf::RenderWindow& window)
         else if (event.mouseButton.button == sf::Mouse::Right)
         {
             drawing = false;
+            (*field)[buf_pos].setFillColor(blackColor);
             field->erase(pos);
         }
     }

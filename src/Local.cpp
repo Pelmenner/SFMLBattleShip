@@ -11,13 +11,13 @@ Local::Local(sf::RenderWindow& wnd, sf::Font& titleFont, sf::Font& fnt) :
 
 bool Local::play()
 {
-    const sf::Vector2f buttonSize = sf::Vector2f(122.0f, 71.0f);
+    const sf::Vector2f buttonSize = sf::Vector2f(200.0f, 71.0f);
 
     sf::Font buttonFont;
     buttonFont.loadFromFile("TitleFont.ttf");
 
-    Button replayButton({ 800.0f, 630.0f }, buttonSize, buttonFont, "Replay");
-    Button exitButton({ 1000.0f, 630.0f }, buttonSize, buttonFont, "Exit");
+    Button replayButton({ 800.0f, 670.0f }, buttonSize, titleFont, "Replay");
+    Button exitButton({ 1100.0f, 670.0f }, buttonSize, titleFont, "Exit");
 
     std::string add = "'s turn";
     sf::Text turn;
@@ -121,9 +121,8 @@ bool Local::play()
             field1->showRemainingShips();
         }
 
-        window.clear();
+        window.clear(blackColor);
 
-        window.draw(background);
         window.draw(name1);
         window.draw(name2);
         window.draw(turn);

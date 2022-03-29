@@ -24,7 +24,6 @@ protected:
 	sf::RenderWindow& window;
 	sf::Font& titleFont;
 	sf::Font& font;
-	sf::RectangleShape background;
 
 private:
 	class Initializer : public sf::Drawable
