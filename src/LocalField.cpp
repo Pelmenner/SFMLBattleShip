@@ -55,10 +55,12 @@ int LocalField::hit(sf::Vector2i pos)
         Ship& ship = *it;
         --ship.health;
         status = 1;
+        operator[](pos).setFillColor(redColor);
 
         if (ship.health == 0)
         {
             status = 2;
+            --shipsCount[ship.length];
             surroundDestroyed(ship.position);
         }
     }

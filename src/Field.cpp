@@ -123,7 +123,8 @@ void Field::dfs(sf::Vector2i pos, sf::Vector2i prev, int& len)
         std::vector<sf::Vector2i> adjacent;
         getNeighbours(pos, adjacent);
         for (const sf::Vector2i& nxt : adjacent)
-            dfs(nxt, pos, len);
+            if (nxt != prev)
+                dfs(nxt, pos, len);
     }
     else
     {

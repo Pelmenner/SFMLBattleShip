@@ -53,7 +53,6 @@ bool Local::play()
                 window.close();
                 break;
             case sf::Event::MouseButtonPressed:
-            {
                 sf::Vector2f pos_float = window.mapPixelToCoords(sf::Mouse::getPosition(window));
                 sf::Vector2i pos(pos_float);
 
@@ -106,7 +105,6 @@ bool Local::play()
                     }
                     else break;
                 }
-            }
             }
         }
 
