@@ -90,6 +90,7 @@ void Game::Initializer::processEvent(sf::Event& event, sf::RenderWindow& window)
         {
             if (randomButton.contains(posFloat))
             {
+                drawing = false;
                 field->randomFill();
                 break;
             }
@@ -100,6 +101,7 @@ void Game::Initializer::processEvent(sf::Event& event, sf::RenderWindow& window)
             }
             if (clearButton.contains(posFloat))
             {
+                drawing = false;
                 field->removeShips();
                 break;
             }

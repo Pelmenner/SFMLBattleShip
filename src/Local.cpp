@@ -37,7 +37,7 @@ bool Local::play()
     int shot = 0;
     bool finished = false;
 
-    field1->setPosition({ 700, 100 });
+    field2->setPosition({ 700, 100 });
     field1->clearCells();
     field2->clearCells();
 
@@ -78,14 +78,14 @@ bool Local::play()
                     pos.x = (pos.x - 50) / 50;
                     pos.y = (pos.y - 100) / 50;
 
-                    if ((*field2)[pos].getFillColor() != blackColor) break;
+                    if ((*field1)[pos].getFillColor() != blackColor) break;
 
-                    if (field2->hit(pos) == 0)
+                    if (field1->hit(pos) == 0)
                     {
-                        (*field2)[pos].setFillColor(grayColor);
+                        (*field1)[pos].setFillColor(grayColor);
                         shot++;
                         arrow.rotate(180.0f);
-                        turn.setString(field1->getName() + add);
+                        turn.setString(field2->getName() + add);
                     }
                     else
                         break;
@@ -95,14 +95,14 @@ bool Local::play()
                     pos.x = (pos.x - 690) / 50;
                     pos.y = (pos.y - 100) / 50;
 
-                    if ((*field1)[pos].getFillColor() != blackColor) break;
+                    if ((*field2)[pos].getFillColor() != blackColor) break;
 
-                    if (field1->hit(pos) == 0)
+                    if (field2->hit(pos) == 0)
                     {
-                        (*field1)[pos].setFillColor(grayColor);
+                        (*field2)[pos].setFillColor(grayColor);
                         shot++;
                         arrow.rotate(180.0f);
-                        turn.setString(field2->getName() + add);
+                        turn.setString(field1->getName() + add);
                     }
                     else break;
                 }
