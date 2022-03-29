@@ -134,6 +134,7 @@ void Game::Initializer::processEvent(sf::Event& event, sf::RenderWindow& window)
         }
         else if (event.mouseButton.button == sf::Mouse::Right)
         {
+            drawing = false;
             field->erase(pos);
         }
     }
