@@ -11,10 +11,8 @@ set(RESOURCES
 )
 
 set(SOURCES
-    
     src/Button.cpp
     src/Connection.cpp
-    
     src/Field.cpp
     src/Functions.cpp
     src/Game.cpp
