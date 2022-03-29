@@ -1,5 +1,7 @@
 #include "Field.h"
 
+const sf::Vector2f Field::nameOffset(10 * 50.f / 2, -90.f);
+
 Field::Field(sf::Vector2f pos, const sf::Font& fnt) : position(pos), font(fnt)
 {
     std::iota(std::rbegin(shipsCount), std::rend(shipsCount), 1);
@@ -27,6 +29,7 @@ Field::Field(sf::Vector2f pos, const sf::Font& fnt) : position(pos), font(fnt)
     }
 
     name.setFont(font);
+    name.setFillColor(nameColor);
 
     updateLayout();
 }
@@ -36,7 +39,7 @@ void Field::setName(const std::string& newName)
     name.setString(newName);
     sf::FloatRect bounds = name.getLocalBounds();
     name.setOrigin({ bounds.width / 2, 0.f });
-    name.setPosition(position + sf::Vector2f(10 * 50.f / 2, -40.f));
+    name.setPosition(position + nameOffset);
 }
 
 void Field::setPosition(sf::Vector2f pos)
@@ -144,5 +147,5 @@ void Field::updateLayout()
         numbers[i].setPosition(position.x - 40.f, position.y + 50.f * i + 5.f);
     }
 
-    name.setPosition(position + sf::Vector2f(10 * 50.f / 2, -40.f));
+    name.setPosition(position + nameOffset);
 }

@@ -40,4 +40,6 @@ private:
 
     void dfs(sf::Vector2i pos, sf::Vector2i prev, int& len);
     void updateLayout();
+
+    static const sf::Vector2f nameOffset;
 };
