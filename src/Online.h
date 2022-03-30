@@ -13,7 +13,7 @@
 class Online : public Game
 {
 public:
-    Online(sf::RenderWindow& wnd, sf::Font& titleFnt, sf::Font& fnt, Connection* mult);
+    Online(sf::RenderWindow& wnd, Connection* mult);
 
     void SetCells(std::vector <sf::RectangleShape>& cells);
 

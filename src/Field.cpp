@@ -1,8 +1,9 @@
+#include "Resources.h"
 #include "Field.h"
 
 const sf::Vector2f Field::nameOffset(10 * 50.f / 2, -90.f);
 
-Field::Field(sf::Vector2f pos, const sf::Font& fnt) : position(pos), font(fnt)
+Field::Field(sf::Vector2f pos) : position(pos)
 {
     std::iota(std::rbegin(shipsCount), std::rend(shipsCount), 1);
     shipsCount[0] = 0;
@@ -21,14 +22,14 @@ Field::Field(sf::Vector2f pos, const sf::Font& fnt) : position(pos), font(fnt)
 
     for (int i = 0; i < 10; ++i)
     {
-        letters[i] = sf::Text(sf::String(char('A' + i)), font);
-        numbers[i] = sf::Text(i == 9 ? "10" : ' ' + std::to_string(i + 1), font);
+        letters[i] = sf::Text(sf::String(char('A' + i)), resources::mainFont);
+        numbers[i] = sf::Text(i == 9 ? "10" : ' ' + std::to_string(i + 1), resources::mainFont);
 
         letters[i].setFillColor(whiteColor);
         numbers[i].setFillColor(whiteColor);
     }
 
-    name.setFont(font);
+    name.setFont(resources::mainFont);
     name.setFillColor(nameColor);
 
     updateLayout();

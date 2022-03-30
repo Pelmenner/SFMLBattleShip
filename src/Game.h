@@ -10,26 +10,24 @@
 class Game
 {
 public:
-	Game(sf::RenderWindow &wnd, sf::Font &titleFont, sf::Font &fnt);
+	Game(sf::RenderWindow &wnd);
 
 	virtual bool play() = 0;
 	virtual void initPlayers() = 0;
 	virtual std::pair<Field*, Field*> getFields() const = 0;
 
 protected:
-	static void setShipNum(std::vector<sf::Text> &shipNum, sf::Font &fnt);
+	static void setShipNum(std::vector<sf::Text> &shipNum);
 	static void setBlocks(std::vector<sf::RectangleShape> &blocks);
 	void initPlayer(LocalField *field);
 	
 	sf::RenderWindow& window;
-	sf::Font& titleFont;
-	sf::Font& font;
 
 private:
 	class Initializer : public sf::Drawable
 	{
 	public:
-		Initializer(LocalField* board, sf::Vector2f buttonSize, sf::Font& buttonFont);
+		Initializer(LocalField* board, sf::Vector2f buttonSize);
 		void processEvent(sf::Event& event, sf::RenderWindow& window);
 		void resetShipNum();
 		bool isReady() const;

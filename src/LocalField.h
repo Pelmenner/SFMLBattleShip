@@ -7,7 +7,7 @@
 class LocalField : public Field
 {
 public:
-    LocalField(sf::Vector2f pos, const sf::Font& fnt);
+    LocalField(sf::Vector2f pos);
 
     void erase(sf::Vector2i pos);
     void showRemainingShips();

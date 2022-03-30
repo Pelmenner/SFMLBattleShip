@@ -8,7 +8,7 @@
 class Local : public Game
 {
 public:
-	Local(sf::RenderWindow& wnd, sf::Font& titleFont, sf::Font& fnt);
+	Local(sf::RenderWindow& wnd);
 
 	void setBlocks(std::vector<sf::RectangleShape>& blocks);
 	void setNames(const std::string& name1, const std::string& name2);

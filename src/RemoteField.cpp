@@ -1,6 +1,6 @@
 #include "RemoteField.h"
 
-RemoteField::RemoteField(sf::Vector2f pos, const sf::Font& fnt) : Field(pos, fnt)
+RemoteField::RemoteField(sf::Vector2f pos) : Field(pos)
 {
 }
 

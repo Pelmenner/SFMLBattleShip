@@ -1,11 +1,12 @@
 #include "Functions.h"
+#include "Resources.h"
 #include "Button.h"
 #include "Online.h"
 
-Online::Online(sf::RenderWindow& wnd, sf::Font& titleFnt, sf::Font& fnt, Connection* mult) :
-	Game(wnd, titleFnt, fnt), 
-	local(new LocalField({ 50, 100 }, fnt)),
-	opponent(new RemoteField({ 50, 100 }, fnt)),
+Online::Online(sf::RenderWindow& wnd, Connection* mult) :
+	Game(wnd), 
+	local(new LocalField({ 50, 100 })),
+	opponent(new RemoteField({ 50, 100 })),
 	mult(mult), localMove(0)
 {
 }
@@ -59,33 +60,32 @@ std::pair<Field*, Field*> Online::getFields() const
 bool Online::play()
 {
 	const sf::Vector2f buttonSize = sf::Vector2f(122.0f, 71.0f);
-	const sf::Font& buttonFont = titleFont;
 
-	Button replayButton({ 800.0f, 665.0f }, buttonSize, buttonFont, "Replay");
-	Button exitButton({ 1000.0f, 665.0f }, buttonSize, buttonFont, "Exit");
+	Button replayButton({ 800.0f, 665.0f }, buttonSize, "Replay");
+	Button exitButton({ 1000.0f, 665.0f }, buttonSize, "Exit");
 
 	const std::string add = "'s turn";
 	sf::Text turn;
 	if (localMove == 0)
-		setText(turn, { 20.0f, 680.0f }, nameColor, titleFont, local->getName() + add);
+		setText(turn, { 20.0f, 680.0f }, nameColor, resources::titleFont, local->getName() + add);
 	else
-		setText(turn, { 20.0f, 680.0f }, nameColor, titleFont, opponent->getName() + add);
+		setText(turn, { 20.0f, 680.0f }, nameColor, resources::titleFont, opponent->getName() + add);
 
 	sf::Text name1, name2;
 	if (localMove == 0)
 	{
-		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, titleFont, local->getName());
-		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, titleFont, opponent->getName());
+		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, resources::titleFont, local->getName());
+		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, resources::titleFont, opponent->getName());
 	}
 	else
 	{
-		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, titleFont, opponent->getName());
-		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, titleFont, local->getName());
+		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, resources::titleFont, opponent->getName());
+		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, resources::titleFont, local->getName());
 	}
 
 	sf::Text arrow;
 	arrow.setOrigin(17.5f, 17.5f);
-	setText(arrow, { 600.0f, 350.0f }, nameColor, titleFont, "=>");
+	setText(arrow, { 600.0f, 350.0f }, nameColor, resources::titleFont, "=>");
 
 	int shot = 0;
 	bool finished = false;

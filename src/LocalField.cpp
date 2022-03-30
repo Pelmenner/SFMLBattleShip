@@ -1,6 +1,6 @@
 #include "LocalField.h"
 
-LocalField::LocalField(sf::Vector2f pos, const sf::Font& fnt) : Field(pos, fnt)
+LocalField::LocalField(sf::Vector2f pos) : Field(pos)
 {
     shipsCount.fill(0);
 }

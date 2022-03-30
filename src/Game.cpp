@@ -1,17 +1,17 @@
+#include "Resources.h"
 #include "Connection.h"
 #include "Functions.h"
 #include "Game.h"
 
-Game::Game(sf::RenderWindow& wnd, sf::Font& titleFont, sf::Font& fnt) :
-    window(wnd), titleFont(titleFont), font(fnt)
+Game::Game(sf::RenderWindow& wnd) : window(wnd)
 {
 }
 
-void Game::setShipNum(std::vector<sf::Text>& shipNum, sf::Font& fnt)
+void Game::setShipNum(std::vector<sf::Text>& shipNum)
 {
     for (size_t i = 0; i < shipNum.size(); ++i)
     {
-        shipNum[i].setFont(fnt);
+        shipNum[i].setFont(resources::mainFont);
         shipNum[i].setFillColor(sf::Color::White);
         shipNum[i].setPosition(700.0f, 100.0f + (float)i * 100.0f);
         shipNum[i].setString(std::to_string(4 - i) + " x ");
@@ -36,10 +36,8 @@ void Game::setBlocks(std::vector<sf::RectangleShape>& blocks)
 void Game::initPlayer(LocalField* field)
 {
     const sf::Vector2f buttonSize = sf::Vector2f(200.0f, 71.0f);
-    sf::Font buttonFont;
-    buttonFont.loadFromFile("data/TitleFont.ttf");
 
-    Initializer initializer(field, buttonSize, buttonFont);
+    Initializer initializer(field, buttonSize);
 
     sf::Clock clock;
     while (window.isOpen() && !initializer.isReady())
@@ -142,19 +140,18 @@ void Game::Initializer::resetShipNum()
         shipNum[i].setString(std::to_string(4 - i - field->countShips(i + 1)) + " x ");
 }
 
-Game::Initializer::Initializer(LocalField* field, sf::Vector2f buttonSize, sf::Font& buttonFont) :
+Game::Initializer::Initializer(LocalField* field, sf::Vector2f buttonSize) :
     field(field),
-    randomButton({ 700.0f, 500.0f }, buttonSize, buttonFont, "Random"),
-    clearButton({ 1000.0f, 500.0f }, buttonSize, buttonFont, "Clear"),
-    acceptButton({ 850.0f, 600.0f }, buttonSize, buttonFont, "Accept"),
+    randomButton({ 700.0f, 500.0f }, buttonSize, "Random"),
+    clearButton({ 1000.0f, 500.0f }, buttonSize, "Clear"),
+    acceptButton({ 850.0f, 600.0f }, buttonSize, "Accept"),
     drawing(false), ready(false), buf_pos(0, 0), shipNum(4), blocks(10), hider({ 1280, 670 })
 {
-    sf::Font& titleFont = buttonFont;
-    name = sf::Text(field->getName(), titleFont);
+    name = sf::Text(field->getName(), resources::titleFont);
     name.setPosition(100, 10);
     name.setFillColor(nameColor);
 
-    setShipNum(shipNum, titleFont);
+    setShipNum(shipNum);
     setBlocks(blocks);
 
     hider.setFillColor(sf::Color::Transparent);

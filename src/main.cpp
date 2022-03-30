@@ -1,5 +1,6 @@
 #include "Connection.h"
 #include "Functions.h"
+#include "Resources.h"
 #include "Button.h"
 #include "Online.h"
 #include "Local.h"
@@ -21,18 +22,16 @@ using sf::RenderWindow;
 using std::string;
 using std::pair;
 
-bool enter_name(RenderWindow& wnd, string text, sf::Font& fnt, sf::Font& titleFnt, string& result);
+bool enter_name(RenderWindow& wnd, string text, string& result);
 int menu(sf::RenderWindow& window);
 
-int SelectConnectionType(sf::RenderWindow& wnd, sf::Font& fnt, sf::Font& titleFnt);
-int WaitConnection(sf::RenderWindow& wnd, Connection* mult, sf::Font& fnt);
-int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, sf::Font& fnt, std::string& opponentName);
+int SelectConnectionType(sf::RenderWindow& wnd);
+int WaitConnection(sf::RenderWindow& wnd, Connection* mult);
+int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, std::string& opponentName);
 
 int main()
 {
-    sf::Font fnt, titleFnt;
-    fnt.loadFromFile("data/font.ttf");
-    titleFnt.loadFromFile("data/TitleFont.ttf");
+    resources::loadResources();
 
     sf::Vector2i wndSize = GetWindowSize();
 
@@ -58,16 +57,16 @@ int main()
         if (choice == 1)
         {
             string name1, name2;
-            if (!enter_name(wnd, "Enter first player's name: ", fnt, titleFnt, name1))
+            if (!enter_name(wnd, "Enter first player's name: ", name1))
                 break;
 
-            if (!enter_name(wnd, "Enter second player's name: ", fnt, titleFnt, name2))
+            if (!enter_name(wnd, "Enter second player's name: ", name2))
                 break;
 
             bool res = true;
             while (res)
             {
-                Local game(wnd, titleFnt, fnt);
+                Local game(wnd);
                 game.setNames(name1, name2);
 
                 game.initPlayers();
@@ -78,13 +77,13 @@ int main()
         else if (choice == 2)
         {
             std::string nickname;
-            if (!enter_name(wnd, "Enter your multiplayer nickname: ", fnt, titleFnt, nickname))
+            if (!enter_name(wnd, "Enter your multiplayer nickname: ", nickname))
                 break;
 
             bool ret = true;
             while (ret)
             {
-                int type = SelectConnectionType(wnd, fnt, titleFnt);
+                int type = SelectConnectionType(wnd);
                 if (type == 0)
                     return 0;
                 if (type == 4)
@@ -94,18 +93,18 @@ int main()
 
                 if (type == 1)
                 {
-                    int res = WaitConnection(wnd, &session, fnt);
+                    int res = WaitConnection(wnd, &session);
                     if (res == 0)
                         return 0;
                     if (res == 1)
                         continue;
 
-                    Online game(wnd, titleFnt, fnt, &session);
+                    Online game(wnd, &session);
                     game.setLocalName(nickname);
                     game.initPlayers();
                     session.SendName(nickname);
                     std::string opponent = "";
-                    res = WaitOpponent(wnd, &session, fnt, opponent);
+                    res = WaitOpponent(wnd, &session, opponent);
                     if (res == 0)
                         return 0;
                     game.SetOpponentName(opponent);
@@ -118,17 +117,17 @@ int main()
                 else if (type == 2)
                 {
                     std::string ip;
-                    if (!enter_name(wnd, "Enter server ip address: ", fnt, titleFnt, ip))
+                    if (!enter_name(wnd, "Enter server ip address: ", ip))
                         break;
 
                     if (!session.ActiveConnection(ip))
                         continue;
 
-                    Online game(wnd, titleFnt, fnt, &session);
+                    Online game(wnd, &session);
                     game.InitLocal(nickname);
                     session.SendName(nickname);
                     std::string opponent = "";
-                    int res = WaitOpponent(wnd, &session, fnt, opponent);
+                    int res = WaitOpponent(wnd, &session, opponent);
                     if (res == 0)
                         return 0;
                     game.SetOpponentName(opponent);
@@ -145,10 +144,12 @@ int main()
     if (wnd.isOpen())
         wnd.close();
 
+    resources::freeResources();
+
     return 0;
 }
 
-int WaitConnection(sf::RenderWindow& wnd, Connection* mult, sf::Font& fnt)
+int WaitConnection(sf::RenderWindow& wnd, Connection* mult)
 {
     sf::RectangleShape bg;
     bg.setFillColor(blackColor);
@@ -156,7 +157,7 @@ int WaitConnection(sf::RenderWindow& wnd, Connection* mult, sf::Font& fnt)
 
     sf::Text txt;
     txt.setString("Waiting for connection...");
-    txt.setFont(fnt);
+    txt.setFont(resources::mainFont);
     txt.setFillColor(grayColor);
     txt.setCharacterSize(80);
     txt.setPosition((sf::Vector2f(1280.0f, 720.0f) - sf::Vector2f(txt.getLocalBounds().width, txt.getLocalBounds().height)) / 2.0f);
@@ -194,7 +195,7 @@ int WaitConnection(sf::RenderWindow& wnd, Connection* mult, sf::Font& fnt)
     return 2;
 }
 
-int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, sf::Font& fnt, std::string& opponentName)
+int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, std::string& opponentName)
 {
     sf::RectangleShape bg;
     bg.setSize(sf::Vector2f(1280.0f, 720.0f));
@@ -202,7 +203,7 @@ int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, sf::Font& fnt, std::st
 
     sf::Text txt;
     txt.setString("Waiting for other player...");
-    txt.setFont(fnt);
+    txt.setFont(resources::mainFont);
     txt.setFillColor(grayColor);
     txt.setCharacterSize(80);
     txt.setPosition((sf::Vector2f(1280.0f, 720.0f) - sf::Vector2f(txt.getLocalBounds().width, txt.getLocalBounds().height)) / 2.0f);
@@ -230,7 +231,7 @@ int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, sf::Font& fnt, std::st
     return 1;
 }
 
-int SelectConnectionType(sf::RenderWindow& wnd, sf::Font& fnt, sf::Font& titleFnt)
+int SelectConnectionType(sf::RenderWindow& wnd)
 {
     sf::RectangleShape bg;
     bg.setSize(sf::Vector2f(1280.0f, 720.0f));
@@ -244,7 +245,7 @@ int SelectConnectionType(sf::RenderWindow& wnd, sf::Font& fnt, sf::Font& titleFn
     button_host.setPosition(sf::Vector2f((1280 - button_host.getSize().x) / 2.0f, 200.0f));
 
     sf::Text text_host;
-    text_host.setFont(fnt);
+    text_host.setFont(resources::mainFont);
     text_host.setFillColor(grayColor);
     text_host.setString("Host game");
     text_host.setCharacterSize(60);
@@ -260,7 +261,7 @@ int SelectConnectionType(sf::RenderWindow& wnd, sf::Font& fnt, sf::Font& titleFn
     sf::Text text_join;
     text_join.setFillColor(grayColor);
     text_join.setString("Join game");
-    text_join.setFont(fnt);
+    text_join.setFont(resources::mainFont);
     text_join.setCharacterSize(60);
     text_join.setPosition(sf::Vector2f((1280 - text_join.getLocalBounds().width) / 2.0f, 360.0f));
 
@@ -274,12 +275,12 @@ int SelectConnectionType(sf::RenderWindow& wnd, sf::Font& fnt, sf::Font& titleFn
     sf::Text text_server;
     text_server.setFillColor(grayColor);
     text_server.setString("Connect to server");
-    text_server.setFont(fnt);
+    text_server.setFont(resources::mainFont);
     text_server.setCharacterSize(60);
     text_server.setPosition(sf::Vector2f((1280 - text_server.getLocalBounds().width) / 2.0f, 510.0f));
 
     sf::Text title;
-    title.setFont(titleFnt);
+    title.setFont(resources::titleFont);
     title.setString("Choose multiplayer connection type: ");
     title.setFillColor(sf::Color::White);
     title.setCharacterSize(36);
@@ -332,7 +333,7 @@ int SelectConnectionType(sf::RenderWindow& wnd, sf::Font& fnt, sf::Font& titleFn
     return -1;
 }
 
-bool enter_name(RenderWindow& wnd, string text, sf::Font& fnt, sf::Font& titleFnt, string& result)
+bool enter_name(RenderWindow& wnd, string text, string& result)
 {
     sf::RectangleShape space;
     space.setSize({ 500, 80 });
@@ -347,18 +348,18 @@ bool enter_name(RenderWindow& wnd, string text, sf::Font& fnt, sf::Font& titleFn
     bg.setSize(sf::Vector2f(1280.0f, 720.0f));
 
     sf::Text title;
-    title.setFont(fnt);
+    title.setFont(resources::mainFont);
     title.setString(text);
     title.setFillColor(sf::Color::White);
     title.setCharacterSize(1280 / 20);
     title.setPosition((1280 - title.getLocalBounds().width) / 2.0f,
         720 / 5.0f);
 
-    Button okButton({ 1280 / 2.0f, 720 / 2.0f * 1.4f }, { 300, 120 }, titleFnt);
+    Button okButton({ 1280 / 2.0f, 720 / 2.0f * 1.4f }, { 300, 120 });
     okButton.setText("OK");
 
     sf::Text txt;
-    txt.setFont(fnt);
+    txt.setFont(resources::mainFont);
     txt.setFillColor(txtColor);
 
     float textPositionY = space.getGlobalBounds().top + (space.getSize().y - txt.getGlobalBounds().height) / 2.0f - 20.0f;
@@ -438,12 +439,10 @@ int menu(sf::RenderWindow& window)
     bg.setFillColor(blackColor);
     bg.setSize(sf::Vector2f(1280.0f, 720.0f));
 
-    sf::Font buttonFont;
-    buttonFont.loadFromFile("data/TitleFont.ttf");
     const sf::Vector2f buttonSize = sf::Vector2f(244, 142);
-    Button localButton({ 1280 / 3.0f, 720 / 3.0f }, buttonSize, buttonFont);
-    Button onlineButton({ 1280 / 3.0f * 2.0f, 720 / 3.0f }, buttonSize, buttonFont);
-    Button exitButton({ 1280 / 2.0f, 720 / 3.0f * 2.0f }, buttonSize, buttonFont);
+    Button localButton({ 1280 / 3.0f, 720 / 3.0f }, buttonSize);
+    Button onlineButton({ 1280 / 3.0f * 2.0f, 720 / 3.0f }, buttonSize);
+    Button exitButton({ 1280 / 2.0f, 720 / 3.0f * 2.0f }, buttonSize);
 
     localButton.setText("Local");
     onlineButton.setText("Online");

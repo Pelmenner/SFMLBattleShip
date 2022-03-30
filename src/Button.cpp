@@ -1,35 +1,25 @@
+#include "Resources.h"
 #include "Button.h"
 #include "Colors.h"
 
-Button::Button(const std::string& texturePath): texture(new sf::Texture())
+Button::Button()
 {
-    texture->loadFromFile(texturePath);
-    texture->setSmooth(true);
-    shape.setTexture(texture);
+    shape.setTexture(resources::buttonTexture);
 }
 
 Button::Button(const sf::Vector2f& position, const sf::Vector2f& size, 
-    const sf::Font& font, const std::string& buttonText, const std::string& texturePath):
-    texture(new sf::Texture())
-{
-    texture->loadFromFile(texturePath);
-    texture->setSmooth(true);
-
+    const std::string& buttonText)
+{    
     shape.setSize(size);
     shape.setPosition(position.x - size.x / 2.0f, position.y - size.y / 2.0f);
-    shape.setTexture(texture);
+    shape.setTexture(resources::buttonTexture);
 
-    text.setFont(font);
+    text.setFont(resources::mainFont);
     text.setCharacterSize(40);
     text.setFillColor(whiteColor);
     text.setStyle(sf::Text::Bold);
     text.setString(buttonText);
     updateTextPosition();
-}
-
-Button::~Button()
-{
-    delete texture;
 }
 
 bool Button::contains(const sf::Vector2f& mousePos)

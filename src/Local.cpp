@@ -1,11 +1,12 @@
 #include "Functions.h"
+#include "Resources.h"
 #include "Button.h"
 #include "Local.h"
 
-Local::Local(sf::RenderWindow& wnd, sf::Font& titleFont, sf::Font& fnt) :
-    Game(wnd, titleFont, fnt),
-    field1(new LocalField({ 50, 100 }, fnt)), 
-    field2(new LocalField({ 50, 100 }, fnt))
+Local::Local(sf::RenderWindow& wnd) :
+    Game(wnd),
+    field1(new LocalField({ 50, 100 })), 
+    field2(new LocalField({ 50, 100 }))
 {
 }
 
@@ -13,26 +14,16 @@ bool Local::play()
 {
     const sf::Vector2f buttonSize = sf::Vector2f(200.0f, 71.0f);
 
-    sf::Font buttonFont;
-    buttonFont.loadFromFile("TitleFont.ttf");
-
-    Button replayButton({ 800.0f, 670.0f }, buttonSize, titleFont, "Replay");
-    Button exitButton({ 1100.0f, 670.0f }, buttonSize, titleFont, "Exit");
+    Button replayButton({ 800.0f, 670.0f }, buttonSize, "Replay");
+    Button exitButton({ 1100.0f, 670.0f }, buttonSize, "Exit");
 
     std::string add = "'s turn";
     sf::Text turn;
-    setText(turn, { 20.0f, 680.0f }, nameColor, titleFont, field1->getName() + add);
-
-    sf::Text name1(field1->getName(), titleFont);
-    sf::Text name2(field2->getName(), titleFont);
-    name1.setFillColor(nameColor);
-    name2.setFillColor(nameColor);
-    name1.setPosition(300, 10);
-    name2.setPosition(900, 10);
+    setText(turn, { 20.0f, 680.0f }, nameColor, resources::titleFont, field1->getName() + add);
 
     sf::Text arrow;
     arrow.setOrigin(17.5, 17.5f);
-    setText(arrow, { 600.0f, 350.0f }, nameColor, titleFont, "=>");
+    setText(arrow, { 600.0f, 350.0f }, nameColor, resources::titleFont, "=>");
 
     int shot = 0;
     bool finished = false;
@@ -123,8 +114,6 @@ bool Local::play()
 
         window.clear(blackColor);
 
-        window.draw(name1);
-        window.draw(name2);
         window.draw(turn);
 
         window.draw(*field1);

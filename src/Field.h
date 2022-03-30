@@ -12,7 +12,7 @@
 class Field : public sf::Drawable
 {
 public:
-    Field(sf::Vector2f pos, const sf::Font& fnt);
+    Field(sf::Vector2f pos);
 
     void setName(const std::string& name);
     void setPosition(sf::Vector2f pos);
@@ -36,7 +36,6 @@ private:
     std::vector<std::vector<sf::RectangleShape>> cells;
     std::array<sf::Text, 10> letters;
     std::array<sf::Text, 10> numbers;
-    const sf::Font& font;
 
     void dfs(sf::Vector2i pos, sf::Vector2i prev, int& len);
     void updateLayout();
