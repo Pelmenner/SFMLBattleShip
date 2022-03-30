@@ -59,10 +59,10 @@ std::pair<Field*, Field*> Online::getFields() const
 
 bool Online::play()
 {
-	const sf::Vector2f buttonSize = sf::Vector2f(122.0f, 71.0f);
+	const sf::Vector2f buttonSize = sf::Vector2f(200.0f, 71.0f);
 
-	Button replayButton({ 800.0f, 665.0f }, buttonSize, "Replay");
-	Button exitButton({ 1000.0f, 665.0f }, buttonSize, "Exit");
+	Button replayButton({ 800.0f, 670.0f }, buttonSize, "Replay");
+	Button exitButton({ 1100.0f, 670.0f }, buttonSize, "Exit");
 
 	const std::string add = "'s turn";
 	sf::Text turn;
@@ -70,18 +70,6 @@ bool Online::play()
 		setText(turn, { 20.0f, 680.0f }, nameColor, *resources.titleFont, local->getName() + add);
 	else
 		setText(turn, { 20.0f, 680.0f }, nameColor, *resources.titleFont, opponent->getName() + add);
-
-	sf::Text name1, name2;
-	if (localMove == 0)
-	{
-		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, *resources.titleFont, local->getName());
-		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, *resources.titleFont, opponent->getName());
-	}
-	else
-	{
-		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, *resources.titleFont, opponent->getName());
-		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, *resources.titleFont, local->getName());
-	}
 
 	sf::Text arrow;
 	arrow.setOrigin(17.5f, 17.5f);
@@ -114,13 +102,13 @@ bool Online::play()
 				window.close();
 				break;
 			case sf::Event::MouseButtonPressed:
-				sf::Vector2f pos_float = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-				sf::Vector2i pos(pos_float);
+				sf::Vector2f posFloat = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+				sf::Vector2i pos(posFloat);
 				if (finished)
 				{
-					if (exitButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+					if (exitButton.contains(posFloat) && evnt.mouseButton.button == sf::Mouse::Left)
 						return false;
-					if (replayButton.contains(pos_float) && evnt.mouseButton.button == sf::Mouse::Left)
+					if (replayButton.contains(posFloat) && evnt.mouseButton.button == sf::Mouse::Left)
 						return true;
 					break;
 				}
@@ -139,14 +127,14 @@ bool Online::play()
 					if ((*opponent)[pos].getFillColor() != blackColor)
 						break;
 
-					bool is_sent = false;
-					while (!is_sent)
-						is_sent = mult->sendMove(pos.x, pos.y);
+					bool isSent = false;
+					while (!isSent)
+						isSent = mult->sendMove(pos.x, pos.y);
 
-					bool is_received = false;
+					bool isReceived = false;
 					int hit = -1;
-					while (!is_received)
-						is_received = mult->receiveResponse(hit);
+					while (!isReceived)
+						isReceived = mult->receiveResponse(hit);
 
 					opponent->setHit(pos, hit);
 					if (hit == 0)
@@ -166,9 +154,9 @@ bool Online::play()
 			if (mult->receiveMove(pos.x, pos.y))
 			{
 				int hit = local->hit(pos);
-				bool is_sent = false;
-				while (!is_sent)
-					is_sent = mult->sendResponse(hit);
+				bool isSent = false;
+				while (!isSent)
+					isSent = mult->sendResponse(hit);
 
 				if (hit == 0)
 				{
@@ -202,10 +190,7 @@ bool Online::play()
 
 		window.clear(blackColor);
 
-		window.draw(name1);
-		window.draw(name2);
 		window.draw(turn);
-
 		window.draw(*local);
 		window.draw(*opponent);
 		window.draw(arrow);

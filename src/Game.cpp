@@ -148,10 +148,6 @@ Game::Initializer::Initializer(LocalField* field, sf::Vector2f buttonSize) :
     acceptButton({ 850.0f, 600.0f }, buttonSize, "Accept"),
     drawing(false), ready(false), buf_pos(0, 0), shipNum(4), blocks(10), hider({ 1280, 670 })
 {
-    name = sf::Text(field->getName(), *resources.titleFont);
-    name.setPosition(100, 10);
-    name.setFillColor(nameColor);
-
     setShipNum(shipNum);
     setBlocks(blocks);
 
@@ -166,8 +162,6 @@ bool Game::Initializer::isReady() const
 
 void Game::Initializer::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(name, states);
-
     if (field->countShips() == 10)
         target.draw(acceptButton, states);
 

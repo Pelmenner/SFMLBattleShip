@@ -42,7 +42,6 @@ private:
         Button clearButton;
         Button acceptButton;
 
-        sf::Text name;
         bool drawing;
 		bool ready;
         sf::Vector2i buf_pos;
