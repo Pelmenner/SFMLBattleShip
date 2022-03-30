@@ -6,15 +6,13 @@
 #include "Local.h"
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Network.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
-#include <iostream>
 #include <string>
 #include <vector>
 
-#pragma comment (linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
 using std::vector;
 using sf::Vector2i;
@@ -22,12 +20,15 @@ using sf::RenderWindow;
 using std::string;
 using std::pair;
 
-bool enter_name(RenderWindow& wnd, string text, string& result);
+bool enterName(RenderWindow& wnd, string text, string& result);
+
 int menu(sf::RenderWindow& window);
 
-int SelectConnectionType(sf::RenderWindow& wnd);
-int WaitConnection(sf::RenderWindow& wnd, Connection* mult);
-int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, std::string& opponentName);
+int selectConnectionType(sf::RenderWindow& wnd);
+
+int waitConnection(sf::RenderWindow& wnd, Connection& mult);
+
+int waitOpponent(sf::RenderWindow& wnd, Connection& mult, std::string& opponentName);
 
 int main()
 {
@@ -57,10 +58,10 @@ int main()
         if (choice == 1)
         {
             string name1, name2;
-            if (!enter_name(wnd, "Enter first player's name: ", name1))
+            if (!enterName(wnd, "Enter first player's name: ", name1))
                 break;
 
-            if (!enter_name(wnd, "Enter second player's name: ", name2))
+            if (!enterName(wnd, "Enter second player's name: ", name2))
                 break;
 
             bool res = true;
@@ -77,13 +78,13 @@ int main()
         else if (choice == 2)
         {
             std::string nickname;
-            if (!enter_name(wnd, "Enter your multiplayer nickname: ", nickname))
+            if (!enterName(wnd, "Enter your multiplayer nickname: ", nickname))
                 break;
 
             bool ret = true;
             while (ret)
             {
-                int type = SelectConnectionType(wnd);
+                int type = selectConnectionType(wnd);
                 if (type == 0)
                     return 0;
                 if (type == 4)
@@ -93,7 +94,7 @@ int main()
 
                 if (type == 1)
                 {
-                    int res = WaitConnection(wnd, &session);
+                    int res = waitConnection(wnd, session);
                     if (res == 0)
                         return 0;
                     if (res == 1)
@@ -104,7 +105,7 @@ int main()
                     game.initPlayers();
                     session.SendName(nickname);
                     std::string opponent = "";
-                    res = WaitOpponent(wnd, &session, opponent);
+                    res = waitOpponent(wnd, session, opponent);
                     if (res == 0)
                         return 0;
                     game.SetOpponentName(opponent);
@@ -117,7 +118,7 @@ int main()
                 else if (type == 2)
                 {
                     std::string ip;
-                    if (!enter_name(wnd, "Enter server ip address: ", ip))
+                    if (!enterName(wnd, "Enter server ip address: ", ip))
                         break;
 
                     if (!session.ActiveConnection(ip))
@@ -127,7 +128,7 @@ int main()
                     game.InitLocal(nickname);
                     session.SendName(nickname);
                     std::string opponent = "";
-                    int res = WaitOpponent(wnd, &session, opponent);
+                    int res = waitOpponent(wnd, session, opponent);
                     if (res == 0)
                         return 0;
                     game.SetOpponentName(opponent);
@@ -149,18 +150,15 @@ int main()
     return 0;
 }
 
-int WaitConnection(sf::RenderWindow& wnd, Connection* mult)
+int waitConnection(sf::RenderWindow& wnd, Connection& mult)
 {
-    sf::RectangleShape bg;
-    bg.setFillColor(blackColor);
-    bg.setSize(sf::Vector2f(1280.0f, 720.0f));
-
     sf::Text txt;
     txt.setString("Waiting for connection...");
     txt.setFont(resources::mainFont);
     txt.setFillColor(grayColor);
     txt.setCharacterSize(80);
-    txt.setPosition((sf::Vector2f(1280.0f, 720.0f) - sf::Vector2f(txt.getLocalBounds().width, txt.getLocalBounds().height)) / 2.0f);
+    txt.setOrigin(txt.getLocalBounds().width / 2, txt.getLocalBounds().height / 2);
+    txt.setPosition(1280.f / 2, 720.f / 2);
 
     while (wnd.isOpen())
     {
@@ -175,17 +173,16 @@ int WaitConnection(sf::RenderWindow& wnd, Connection* mult)
             case sf::Event::KeyPressed:
                 if (evnt.key.code == sf::Keyboard::Escape)
                 {
-                    mult->Disconnect();
+                    mult.Disconnect();
                     return 1;
                 }
             }
         }
 
-        if (mult->PassiveConnection())
+        if (mult.PassiveConnection())
             break;
 
-        wnd.clear();
-        wnd.draw(bg);
+        wnd.clear(blackColor);
         wnd.draw(txt);
         wnd.display();
 
@@ -195,20 +192,17 @@ int WaitConnection(sf::RenderWindow& wnd, Connection* mult)
     return 2;
 }
 
-int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, std::string& opponentName)
+int waitOpponent(sf::RenderWindow& wnd, Connection& mult, std::string& opponentName)
 {
-    sf::RectangleShape bg;
-    bg.setSize(sf::Vector2f(1280.0f, 720.0f));
-    bg.setFillColor(blackColor);
-
     sf::Text txt;
     txt.setString("Waiting for other player...");
     txt.setFont(resources::mainFont);
     txt.setFillColor(grayColor);
     txt.setCharacterSize(80);
-    txt.setPosition((sf::Vector2f(1280.0f, 720.0f) - sf::Vector2f(txt.getLocalBounds().width, txt.getLocalBounds().height)) / 2.0f);
+    txt.setOrigin(txt.getLocalBounds().width / 2, txt.getLocalBounds().height / 2);
+    txt.setPosition(1280.f / 2, 720.f / 2);
 
-    while (wnd.isOpen() && !mult->ReceiveName(opponentName))
+    while (wnd.isOpen() && !mult.ReceiveName(opponentName))
     {
         sf::Event evnt;
         while (wnd.pollEvent(evnt))
@@ -220,8 +214,7 @@ int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, std::string& opponentN
             }
         }
 
-        wnd.clear();
-        wnd.draw(bg);
+        wnd.clear(blackColor);
         wnd.draw(txt);
         wnd.display();
 
@@ -231,60 +224,21 @@ int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, std::string& opponentN
     return 1;
 }
 
-int SelectConnectionType(sf::RenderWindow& wnd)
+int selectConnectionType(sf::RenderWindow& wnd)
 {
-    sf::RectangleShape bg;
-    bg.setSize(sf::Vector2f(1280.0f, 720.0f));
-    bg.setFillColor(blackColor);
+    const sf::Vector2f buttonSize(800.f, 100.f);
 
-    sf::RectangleShape button_host;
-    button_host.setSize(sf::Vector2f(800.0f, 100.0f));
-    button_host.setOutlineColor(blueColor);
-    button_host.setOutlineThickness(5);
-    button_host.setFillColor(blackColor);
-    button_host.setPosition(sf::Vector2f((1280 - button_host.getSize().x) / 2.0f, 200.0f));
-
-    sf::Text text_host;
-    text_host.setFont(resources::mainFont);
-    text_host.setFillColor(grayColor);
-    text_host.setString("Host game");
-    text_host.setCharacterSize(60);
-    text_host.setPosition(sf::Vector2f((1280 - text_host.getLocalBounds().width) / 2.0f, 210.0f));
-
-    sf::RectangleShape button_join;
-    button_join.setSize(sf::Vector2f(800.0f, 100.0f));
-    button_join.setOutlineColor(blueColor);
-    button_join.setOutlineThickness(5);
-    button_join.setFillColor(blackColor);
-    button_join.setPosition(sf::Vector2f((1280 - button_join.getSize().x) / 2.0f, 350.0f));
-
-    sf::Text text_join;
-    text_join.setFillColor(grayColor);
-    text_join.setString("Join game");
-    text_join.setFont(resources::mainFont);
-    text_join.setCharacterSize(60);
-    text_join.setPosition(sf::Vector2f((1280 - text_join.getLocalBounds().width) / 2.0f, 360.0f));
-
-    sf::RectangleShape button_server;
-    button_server.setSize(sf::Vector2f(800.0f, 100.0f));
-    button_server.setOutlineColor(blueColor);
-    button_server.setOutlineThickness(5);
-    button_server.setFillColor(blackColor);
-    button_server.setPosition(sf::Vector2f((1280 - button_server.getSize().x) / 2.0f, 500.0f));
-
-    sf::Text text_server;
-    text_server.setFillColor(grayColor);
-    text_server.setString("Connect to server");
-    text_server.setFont(resources::mainFont);
-    text_server.setCharacterSize(60);
-    text_server.setPosition(sf::Vector2f((1280 - text_server.getLocalBounds().width) / 2.0f, 510.0f));
+    Button hostButton({ 1280.f / 2, 250.f }, buttonSize, "Host game");
+    Button joinButton({ 1280.f / 2, 400.f }, buttonSize, "Join game");
+    Button serverButton({ 1280.f / 2, 550.f }, buttonSize, "Connect to server");
 
     sf::Text title;
     title.setFont(resources::titleFont);
     title.setString("Choose multiplayer connection type: ");
-    title.setFillColor(sf::Color::White);
+    title.setFillColor(whiteColor);
     title.setCharacterSize(36);
-    title.setPosition(sf::Vector2f((1280 - title.getLocalBounds().width) / 2.0f, 50.0f));
+    title.setOrigin(title.getLocalBounds().width / 2, 0.f);
+    title.setPosition(1280.f / 2, 50.f);
     title.setStyle(sf::Text::Bold);
 
     while (wnd.isOpen())
@@ -305,26 +259,21 @@ int SelectConnectionType(sf::RenderWindow& wnd)
                 if (evnt.mouseButton.button == sf::Mouse::Left)
                 {
                     sf::Vector2f pos = wnd.mapPixelToCoords(sf::Mouse::getPosition(wnd));
-                    if (button_host.getGlobalBounds().contains(pos))
+                    if (hostButton.contains(pos))
                         return 1;
-                    if (button_join.getGlobalBounds().contains(pos))
+                    if (joinButton.contains(pos))
                         return 2;
                 }
             }
         }
 
-        wnd.clear();
+        wnd.clear(blackColor);
 
-        wnd.draw(bg);
         wnd.draw(title);
 
-        wnd.draw(button_host);
-        wnd.draw(button_join);
-        wnd.draw(button_server);
-
-        wnd.draw(text_join);
-        wnd.draw(text_host);
-        wnd.draw(text_server);
+        wnd.draw(hostButton);
+        wnd.draw(joinButton);
+        wnd.draw(serverButton);
 
         wnd.display();
 
@@ -333,39 +282,33 @@ int SelectConnectionType(sf::RenderWindow& wnd)
     return -1;
 }
 
-bool enter_name(RenderWindow& wnd, string text, string& result)
+bool enterName(RenderWindow& wnd, string text, string& result)
 {
     sf::RectangleShape space;
     space.setSize({ 500, 80 });
     space.setOutlineColor(blueColor);
     space.setOutlineThickness(5);
     space.setFillColor(grayColor);
-    space.setPosition((1280 - space.getSize().x) / 2.0f,
-        (720 - space.getSize().y) / 2.0f * 0.8f);
-
-    sf::RectangleShape bg;
-    bg.setFillColor(blackColor);
-    bg.setSize(sf::Vector2f(1280.0f, 720.0f));
+    space.setOrigin(space.getLocalBounds().width / 2, space.getLocalBounds().height / 2);
+    space.setPosition(1280.f / 2, 720 / 2.0f * 0.8f);
 
     sf::Text title;
     title.setFont(resources::mainFont);
     title.setString(text);
     title.setFillColor(sf::Color::White);
     title.setCharacterSize(1280 / 20);
-    title.setPosition((1280 - title.getLocalBounds().width) / 2.0f,
-        720 / 5.0f);
+    title.setOrigin(title.getLocalBounds().width / 2, 0);
+    title.setPosition(1280.f / 2, 720.f / 5);
 
-    Button okButton({ 1280 / 2.0f, 720 / 2.0f * 1.4f }, { 300, 120 });
+    Button okButton({ 1280.f / 2, 720.f / 2 * 1.4f }, { 300, 120 });
     okButton.setText("OK");
 
     sf::Text txt;
     txt.setFont(resources::mainFont);
     txt.setFillColor(txtColor);
-
-    float textPositionY = space.getGlobalBounds().top + (space.getSize().y - txt.getGlobalBounds().height) / 2.0f - 20.0f;
-    txt.setPosition(space.getGlobalBounds().left + (space.getSize().x - txt.getLocalBounds().width) / 2.0f, textPositionY);
-
-    const int maxLength = 30;
+    txt.setPosition(space.getPosition());
+    const float originY = 25.f;
+    txt.setOrigin(txt.getLocalBounds().width / 2, originY);
 
     sf::Clock clock;
     while (wnd.isOpen())
@@ -384,20 +327,20 @@ bool enter_name(RenderWindow& wnd, string text, string& result)
                 {
                     sf::Vector2f pos = wnd.mapPixelToCoords(sf::Mouse::getPosition(wnd));
                     if (okButton.contains({ pos.x, pos.y }))
-                        return 1;
+                        return true;
                 }
                 break;
 
             case sf::Event::KeyPressed:
                 if (evnt.key.code == sf::Keyboard::Escape)
-                    return 0;
+                    return false;
                 break;
 
             case sf::Event::TextEntered:
                 switch (evnt.text.unicode)
                 {
                 case 0xD: //Return
-                    return 1;
+                    return true;
                 case 0x8: //Backspace
                     if (!result.empty())
                         result.pop_back();
@@ -405,21 +348,17 @@ bool enter_name(RenderWindow& wnd, string text, string& result)
                 default:
                     result += (wchar_t)evnt.text.unicode;
                 }
-
                 txt.setString(result);
                 if (txt.getLocalBounds().width > space.getLocalBounds().width && !result.empty())
                 {
                     result.pop_back();
                     txt.setString(result);
                 }
-
-                txt.setPosition(space.getGlobalBounds().left +
-                    (space.getLocalBounds().width - txt.getLocalBounds().width) / 2.0f, textPositionY);
+                txt.setOrigin(txt.getLocalBounds().width / 2, originY);
             }
         }
 
-        wnd.clear();
-        wnd.draw(bg);
+        wnd.clear(blackColor);
         wnd.draw(space);
         wnd.draw(txt);
         wnd.draw(title);
@@ -430,7 +369,7 @@ bool enter_name(RenderWindow& wnd, string text, string& result)
         clock.restart();
     }
 
-    return 1;
+    return true;
 }
 
 int menu(sf::RenderWindow& window)
@@ -459,15 +398,10 @@ int menu(sf::RenderWindow& window)
             case sf::Event::Closed:
                 window.close();
                 return 0;
-                break;
 
             case sf::Event::KeyPressed:
                 if (evnt.key.code == sf::Keyboard::Escape)
                     return 0;
-                else if (evnt.key.code == sf::Keyboard::L)
-                    return 1;
-                else if (evnt.key.code == sf::Keyboard::O)
-                    return 2;
                 break;
 
             case sf::Event::MouseButtonPressed:
