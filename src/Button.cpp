@@ -4,7 +4,7 @@
 
 Button::Button()
 {
-    shape.setTexture(resources::buttonTexture);
+    shape.setTexture(resources.buttonTexture);
 }
 
 Button::Button(const sf::Vector2f& position, const sf::Vector2f& size, 
@@ -12,9 +12,9 @@ Button::Button(const sf::Vector2f& position, const sf::Vector2f& size,
 {    
     shape.setSize(size);
     shape.setPosition(position.x - size.x / 2.0f, position.y - size.y / 2.0f);
-    shape.setTexture(resources::buttonTexture);
+    shape.setTexture(resources.buttonTexture);
 
-    text.setFont(resources::mainFont);
+    text.setFont(*resources.mainFont);
     text.setCharacterSize(40);
     text.setFillColor(whiteColor);
     text.setStyle(sf::Text::Bold);

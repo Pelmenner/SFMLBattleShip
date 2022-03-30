@@ -22,14 +22,14 @@ Field::Field(sf::Vector2f pos) : position(pos)
 
     for (int i = 0; i < 10; ++i)
     {
-        letters[i] = sf::Text(sf::String(char('A' + i)), resources::mainFont);
-        numbers[i] = sf::Text(i == 9 ? "10" : ' ' + std::to_string(i + 1), resources::mainFont);
+        letters[i] = sf::Text(sf::String(char('A' + i)), *resources.mainFont);
+        numbers[i] = sf::Text(i == 9 ? "10" : ' ' + std::to_string(i + 1), *resources.mainFont);
 
         letters[i].setFillColor(whiteColor);
         numbers[i].setFillColor(whiteColor);
     }
 
-    name.setFont(resources::mainFont);
+    name.setFont(*resources.mainFont);
     name.setFillColor(nameColor);
 
     updateLayout();

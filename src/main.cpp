@@ -29,9 +29,23 @@ int SelectConnectionType(sf::RenderWindow& wnd);
 int WaitConnection(sf::RenderWindow& wnd, Connection* mult);
 int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, std::string& opponentName);
 
+class ResourceWrapper
+{
+public:
+    ResourceWrapper() 
+    {
+        resources.loadResources();
+    }
+
+    ~ResourceWrapper()
+    {
+        resources.freeResources();
+    }
+};
+
 int main()
 {
-    resources::loadResources();
+    ResourceWrapper resourceWrapper;
 
     sf::Vector2i wndSize = GetWindowSize();
 
@@ -144,8 +158,6 @@ int main()
     if (wnd.isOpen())
         wnd.close();
 
-    resources::freeResources();
-
     return 0;
 }
 
@@ -157,7 +169,7 @@ int WaitConnection(sf::RenderWindow& wnd, Connection* mult)
 
     sf::Text txt;
     txt.setString("Waiting for connection...");
-    txt.setFont(resources::mainFont);
+    txt.setFont(*resources.mainFont);
     txt.setFillColor(grayColor);
     txt.setCharacterSize(80);
     txt.setPosition((sf::Vector2f(1280.0f, 720.0f) - sf::Vector2f(txt.getLocalBounds().width, txt.getLocalBounds().height)) / 2.0f);
@@ -203,7 +215,7 @@ int WaitOpponent(sf::RenderWindow& wnd, Connection* mult, std::string& opponentN
 
     sf::Text txt;
     txt.setString("Waiting for other player...");
-    txt.setFont(resources::mainFont);
+    txt.setFont(*resources.mainFont);
     txt.setFillColor(grayColor);
     txt.setCharacterSize(80);
     txt.setPosition((sf::Vector2f(1280.0f, 720.0f) - sf::Vector2f(txt.getLocalBounds().width, txt.getLocalBounds().height)) / 2.0f);
@@ -245,7 +257,7 @@ int SelectConnectionType(sf::RenderWindow& wnd)
     button_host.setPosition(sf::Vector2f((1280 - button_host.getSize().x) / 2.0f, 200.0f));
 
     sf::Text text_host;
-    text_host.setFont(resources::mainFont);
+    text_host.setFont(*resources.mainFont);
     text_host.setFillColor(grayColor);
     text_host.setString("Host game");
     text_host.setCharacterSize(60);
@@ -261,7 +273,7 @@ int SelectConnectionType(sf::RenderWindow& wnd)
     sf::Text text_join;
     text_join.setFillColor(grayColor);
     text_join.setString("Join game");
-    text_join.setFont(resources::mainFont);
+    text_join.setFont(*resources.mainFont);
     text_join.setCharacterSize(60);
     text_join.setPosition(sf::Vector2f((1280 - text_join.getLocalBounds().width) / 2.0f, 360.0f));
 
@@ -275,12 +287,12 @@ int SelectConnectionType(sf::RenderWindow& wnd)
     sf::Text text_server;
     text_server.setFillColor(grayColor);
     text_server.setString("Connect to server");
-    text_server.setFont(resources::mainFont);
+    text_server.setFont(*resources.mainFont);
     text_server.setCharacterSize(60);
     text_server.setPosition(sf::Vector2f((1280 - text_server.getLocalBounds().width) / 2.0f, 510.0f));
 
     sf::Text title;
-    title.setFont(resources::titleFont);
+    title.setFont(*resources.titleFont);
     title.setString("Choose multiplayer connection type: ");
     title.setFillColor(sf::Color::White);
     title.setCharacterSize(36);
@@ -348,7 +360,7 @@ bool enter_name(RenderWindow& wnd, string text, string& result)
     bg.setSize(sf::Vector2f(1280.0f, 720.0f));
 
     sf::Text title;
-    title.setFont(resources::mainFont);
+    title.setFont(*resources.mainFont);
     title.setString(text);
     title.setFillColor(sf::Color::White);
     title.setCharacterSize(1280 / 20);
@@ -359,7 +371,7 @@ bool enter_name(RenderWindow& wnd, string text, string& result)
     okButton.setText("OK");
 
     sf::Text txt;
-    txt.setFont(resources::mainFont);
+    txt.setFont(*resources.mainFont);
     txt.setFillColor(txtColor);
 
     float textPositionY = space.getGlobalBounds().top + (space.getSize().y - txt.getGlobalBounds().height) / 2.0f - 20.0f;

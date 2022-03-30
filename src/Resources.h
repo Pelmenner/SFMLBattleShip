@@ -2,25 +2,30 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace resources
+class Resources
 {
-    inline sf::Font titleFont;
-    inline sf::Font mainFont;
-    inline sf::Texture* buttonTexture;
+public:
+    sf::Font* titleFont;
+    sf::Font* mainFont;
+    sf::Texture* buttonTexture;
 
-    inline void loadResources()
+    void loadResources()
     {
-        mainFont.loadFromFile("data/font.ttf");
-        titleFont.loadFromFile("data/TitleFont.ttf");
+        titleFont = new sf::Font();
+        mainFont = new sf::Font();
+        mainFont->loadFromFile("data/font.ttf");
+        titleFont->loadFromFile("data/TitleFont.ttf");
         buttonTexture = new sf::Texture();
         buttonTexture->loadFromFile("data/button.png");
         buttonTexture->setSmooth(true);
     }
 
-    inline void freeResources()
+    void freeResources()
     {
-        mainFont.loadFromFile("");
-        titleFont.loadFromFile("");
+        delete mainFont;
+        delete titleFont;
         delete buttonTexture;
     }
 };
+
+inline Resources resources;

@@ -19,11 +19,11 @@ bool Local::play()
 
     std::string add = "'s turn";
     sf::Text turn;
-    setText(turn, { 20.0f, 680.0f }, nameColor, resources::titleFont, field1->getName() + add);
+    setText(turn, { 20.0f, 680.0f }, nameColor, *resources.titleFont, field1->getName() + add);
 
     sf::Text arrow;
     arrow.setOrigin(17.5, 17.5f);
-    setText(arrow, { 600.0f, 350.0f }, nameColor, resources::titleFont, "=>");
+    setText(arrow, { 600.0f, 350.0f }, nameColor, *resources.titleFont, "=>");
 
     int shot = 0;
     bool finished = false;

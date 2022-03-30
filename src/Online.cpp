@@ -67,25 +67,25 @@ bool Online::play()
 	const std::string add = "'s turn";
 	sf::Text turn;
 	if (localMove == 0)
-		setText(turn, { 20.0f, 680.0f }, nameColor, resources::titleFont, local->getName() + add);
+		setText(turn, { 20.0f, 680.0f }, nameColor, *resources.titleFont, local->getName() + add);
 	else
-		setText(turn, { 20.0f, 680.0f }, nameColor, resources::titleFont, opponent->getName() + add);
+		setText(turn, { 20.0f, 680.0f }, nameColor, *resources.titleFont, opponent->getName() + add);
 
 	sf::Text name1, name2;
 	if (localMove == 0)
 	{
-		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, resources::titleFont, local->getName());
-		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, resources::titleFont, opponent->getName());
+		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, *resources.titleFont, local->getName());
+		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, *resources.titleFont, opponent->getName());
 	}
 	else
 	{
-		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, resources::titleFont, opponent->getName());
-		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, resources::titleFont, local->getName());
+		setText(name1, sf::Vector2f(300.0f, 10.0f), nameColor, *resources.titleFont, opponent->getName());
+		setText(name2, sf::Vector2f(900.0f, 10.0f), nameColor, *resources.titleFont, local->getName());
 	}
 
 	sf::Text arrow;
 	arrow.setOrigin(17.5f, 17.5f);
-	setText(arrow, { 600.0f, 350.0f }, nameColor, resources::titleFont, "=>");
+	setText(arrow, { 600.0f, 350.0f }, nameColor, *resources.titleFont, "=>");
 
 	int shot = 0;
 	bool finished = false;

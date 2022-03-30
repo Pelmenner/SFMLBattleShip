@@ -11,7 +11,7 @@ void Game::setShipNum(std::vector<sf::Text>& shipNum)
 {
     for (size_t i = 0; i < shipNum.size(); ++i)
     {
-        shipNum[i].setFont(resources::mainFont);
+        shipNum[i].setFont(*resources.mainFont);
         shipNum[i].setFillColor(sf::Color::White);
         shipNum[i].setPosition(700.0f, 100.0f + (float)i * 100.0f);
         shipNum[i].setString(std::to_string(4 - i) + " x ");
@@ -148,7 +148,7 @@ Game::Initializer::Initializer(LocalField* field, sf::Vector2f buttonSize) :
     acceptButton({ 850.0f, 600.0f }, buttonSize, "Accept"),
     drawing(false), ready(false), buf_pos(0, 0), shipNum(4), blocks(10), hider({ 1280, 670 })
 {
-    name = sf::Text(field->getName(), resources::titleFont);
+    name = sf::Text(field->getName(), *resources.titleFont);
     name.setPosition(100, 10);
     name.setFillColor(nameColor);
 

@@ -1,13 +1,6 @@
 #include "Functions.h"
 
-void initTexture(sf::Texture*& texture, const std::string& path, bool smooth)
-{
-    texture = new sf::Texture();
-    texture->loadFromFile(path);
-    texture->setSmooth(smooth);
-}
-
-void setText(sf::Text& txt, sf::Vector2f pos, sf::Color color, sf::Font& fnt, const std::string& str)
+void setText(sf::Text& txt, sf::Vector2f pos, sf::Color color, const sf::Font& fnt, const std::string& str)
 {
     txt.setPosition(pos);
     txt.setFillColor(color);
