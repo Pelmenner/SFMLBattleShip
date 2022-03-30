@@ -29,3 +29,17 @@ public:
 };
 
 inline Resources resources;
+
+class ResourceWrapper
+{
+public:
+    ResourceWrapper()
+    {
+        resources.loadResources();
+    }
+
+    ~ResourceWrapper()
+    {
+        resources.freeResources();
+    }
+};

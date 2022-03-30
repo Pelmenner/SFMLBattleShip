@@ -26,19 +26,9 @@ int menu(sf::RenderWindow& window);
 
 int selectConnectionType(sf::RenderWindow& wnd);
 
-class ResourceWrapper
-{
-public:
-    ResourceWrapper() 
-    {
-        resources.loadResources();
-    }
+int waitConnection(sf::RenderWindow& wnd, Connection& mult);
 
-    ~ResourceWrapper()
-    {
-        resources.freeResources();
-    }
-};
+int waitOpponent(sf::RenderWindow& wnd, Connection& mult, std::string& opponentName);
 
 int main()
 {
