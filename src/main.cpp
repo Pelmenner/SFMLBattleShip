@@ -34,7 +34,7 @@ int main()
 {
     resources::loadResources();
 
-    sf::Vector2i wndSize = GetWindowSize();
+    sf::Vector2i wndSize = getWindowSize();
 
     RenderWindow wnd(sf::VideoMode(wndSize.x, wndSize.y), "Sea Battle");
     wnd.setFramerateLimit(60);
@@ -103,17 +103,17 @@ int main()
                     Online game(wnd, &session);
                     game.setLocalName(nickname);
                     game.initPlayers();
-                    session.SendName(nickname);
+                    session.sendName(nickname);
                     std::string opponent = "";
                     res = waitOpponent(wnd, session, opponent);
                     if (res == 0)
                         return 0;
-                    game.SetOpponentName(opponent);
+                    game.setOpponentName(opponent);
 
                     game.setLocalMove(0);
                     ret = game.play();
 
-                    session.Disconnect();
+                    session.disconnect();
                 }
                 else if (type == 2)
                 {
@@ -121,22 +121,22 @@ int main()
                     if (!enterName(wnd, "Enter server ip address: ", ip))
                         break;
 
-                    if (!session.ActiveConnection(ip))
+                    if (!session.activeConnection(ip))
                         continue;
 
                     Online game(wnd, &session);
-                    game.InitLocal(nickname);
-                    session.SendName(nickname);
+                    game.initLocal(nickname);
+                    session.sendName(nickname);
                     std::string opponent = "";
                     int res = waitOpponent(wnd, session, opponent);
                     if (res == 0)
                         return 0;
-                    game.SetOpponentName(opponent);
+                    game.setOpponentName(opponent);
 
                     game.setLocalMove(1);
                     ret = game.play();
 
-                    session.Disconnect();
+                    session.disconnect();
                 }
             }
         }
@@ -173,13 +173,13 @@ int waitConnection(sf::RenderWindow& wnd, Connection& mult)
             case sf::Event::KeyPressed:
                 if (evnt.key.code == sf::Keyboard::Escape)
                 {
-                    mult.Disconnect();
+                    mult.disconnect();
                     return 1;
                 }
             }
         }
 
-        if (mult.PassiveConnection())
+        if (mult.passiveConnection())
             break;
 
         wnd.clear(blackColor);
@@ -202,7 +202,7 @@ int waitOpponent(sf::RenderWindow& wnd, Connection& mult, std::string& opponentN
     txt.setOrigin(txt.getLocalBounds().width / 2, txt.getLocalBounds().height / 2);
     txt.setPosition(1280.f / 2, 720.f / 2);
 
-    while (wnd.isOpen() && !mult.ReceiveName(opponentName))
+    while (wnd.isOpen() && !mult.receiveName(opponentName))
     {
         sf::Event evnt;
         while (wnd.pollEvent(evnt))

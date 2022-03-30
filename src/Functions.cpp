@@ -16,7 +16,7 @@ void setText(sf::Text& txt, sf::Vector2f pos, sf::Color color, sf::Font& fnt, co
         txt.setString(str);
 }
 
-sf::Vector2i GetWindowSize()
+sf::Vector2i getWindowSize()
 {
     int width = sf::VideoMode::getDesktopMode().width - 150;
     int height = sf::VideoMode::getDesktopMode().height - 100;
