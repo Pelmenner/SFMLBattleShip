@@ -16,21 +16,21 @@ private:
 public:
 	Connection();
 
-	bool PassiveConnection(int port = 19273);
-	bool ActiveConnection(std::string ip, int port = 19273);
+	bool passiveConnection(int port = 19273);
+	bool activeConnection(std::string ip, int port = 19273);
 
-	bool SendName(const std::string &name);
-	bool ReceiveName(std::string &name);
+	bool sendName(const std::string &name);
+	bool receiveName(std::string &name);
 
-	bool SendMove(int x, int y);
-	bool ReceiveMove(int &x, int &y);
-	bool SendResponse(int hit);
-	bool ReceiveResponse(int &hit);
+	bool sendMove(int x, int y);
+	bool receiveMove(int &x, int &y);
+	bool sendResponse(int hit);
+	bool receiveResponse(int &hit);
 
-	bool SendField(int state[10][10]);
-	bool ReceiveField(RemoteField &b);
+	bool sendField(int state[10][10]);
+	bool receiveField(RemoteField &b);
 
-	bool ReceiveTurn(int &turn);
+	bool receiveTurn(int &turn);
 
-	void Disconnect();
+	void disconnect();
 };

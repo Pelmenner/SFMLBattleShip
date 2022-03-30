@@ -6,7 +6,7 @@ Connection::Connection() : connected(false), listening(false)
 	listener.setBlocking(false);
 }
 
-bool Connection::PassiveConnection(int port)
+bool Connection::passiveConnection(int port)
 {
 	if (connected)
 		return true;
@@ -34,7 +34,7 @@ bool Connection::PassiveConnection(int port)
 	}
 }
 
-bool Connection::ActiveConnection(std::string ip, int port)
+bool Connection::activeConnection(std::string ip, int port)
 {
 	if (connected)
 		return true;
@@ -57,7 +57,7 @@ bool Connection::ActiveConnection(std::string ip, int port)
 	return connected;
 }
 
-bool Connection::SendName(const std::string &name)
+bool Connection::sendName(const std::string &name)
 {
 	sf::Packet pkt;
 	pkt << sf::String(name);
@@ -65,7 +65,7 @@ bool Connection::SendName(const std::string &name)
 	return client.send(pkt) == sf::Socket::Done;
 }
 
-bool Connection::ReceiveName(std::string &name)
+bool Connection::receiveName(std::string &name)
 {
 	if (!connected)
 		return false;
@@ -94,7 +94,7 @@ bool Connection::ReceiveName(std::string &name)
 	}
 }
 
-bool Connection::SendMove(int x, int y)
+bool Connection::sendMove(int x, int y)
 {
 	if (!connected)
 		return false;
@@ -105,7 +105,7 @@ bool Connection::SendMove(int x, int y)
 	return client.send(pkt) == sf::Socket::Done;
 }
 
-bool Connection::ReceiveMove(int &x, int &y)
+bool Connection::receiveMove(int &x, int &y)
 {
 	if (!connected)
 		return false;
@@ -136,7 +136,7 @@ bool Connection::ReceiveMove(int &x, int &y)
 	}
 }
 
-bool Connection::SendResponse(int hit)
+bool Connection::sendResponse(int hit)
 {
 	if (!connected)
 		return false;
@@ -147,7 +147,7 @@ bool Connection::SendResponse(int hit)
 	return client.send(pkt) == sf::Socket::Done;
 }
 
-bool Connection::ReceiveResponse(int &hit)
+bool Connection::receiveResponse(int &hit)
 {
 	if (!connected)
 		return false;
@@ -174,7 +174,7 @@ bool Connection::ReceiveResponse(int &hit)
 	}
 }
 
-bool Connection::SendField(int state[10][10])
+bool Connection::sendField(int state[10][10])
 {
 	if (!connected)
 		return false;
@@ -187,7 +187,7 @@ bool Connection::SendField(int state[10][10])
 	return client.send(pkt) == sf::Socket::Done;
 }
 
-bool Connection::ReceiveField(RemoteField &b)
+bool Connection::receiveField(RemoteField &b)
 {
 	if (!connected)
 		return false;
@@ -229,7 +229,7 @@ bool Connection::ReceiveField(RemoteField &b)
 	}
 }
 
-bool Connection::ReceiveTurn(int &turn)
+bool Connection::receiveTurn(int &turn)
 {
 	if (!connected)
 		return false;
@@ -251,7 +251,7 @@ bool Connection::ReceiveTurn(int &turn)
 	return true;
 }
 
-void Connection::Disconnect()
+void Connection::disconnect()
 {
 	if (listening)
 	{

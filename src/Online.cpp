@@ -11,7 +11,7 @@ Online::Online(sf::RenderWindow& wnd, Connection* mult) :
 {
 }
 
-void Online::SetCells(std::vector<sf::RectangleShape> &cells)
+void Online::setCells(std::vector<sf::RectangleShape> &cells)
 {
 	for (int i = 0; i < 10; ++i)
 	{
@@ -26,20 +26,20 @@ void Online::SetCells(std::vector<sf::RectangleShape> &cells)
 			cells[(i * (i + 1)) / 2 + j].setPosition(775.0f + (float) j * 50.0f, 100.0f + (float) i * 100.0f);
 }
 
-void Online::InitLocal(const std::string &local_name)
+void Online::initLocal(const std::string &name)
 {
-	local->setName(local_name);
+	local->setName(name);
 	initPlayer(local);
 }
 
-void Online::SetOpponentName(const std::string &name)
+void Online::setOpponentName(const std::string &name)
 {
 	opponent->setName(name);
 }
 
 void Online::initPlayers()
 {
-	InitLocal(local->getName());
+    initLocal(local->getName());
 }
 
 void Online::setLocalMove(int move)
@@ -141,12 +141,12 @@ bool Online::play()
 
 					bool is_sent = false;
 					while (!is_sent)
-						is_sent = mult->SendMove(pos.x, pos.y);
+						is_sent = mult->sendMove(pos.x, pos.y);
 
 					bool is_received = false;
 					int hit = -1;
 					while (!is_received)
-						is_received = mult->ReceiveResponse(hit);
+						is_received = mult->receiveResponse(hit);
 
 					opponent->setHit(pos, hit);
 					if (hit == 0)
@@ -163,12 +163,12 @@ bool Online::play()
 		if (shot % 2 != localMove)
 		{
 			sf::Vector2i pos = {};
-			if (mult->ReceiveMove(pos.x, pos.y))
+			if (mult->receiveMove(pos.x, pos.y))
 			{
 				int hit = local->hit(pos);
 				bool is_sent = false;
 				while (!is_sent)
-					is_sent = mult->SendResponse(hit);
+					is_sent = mult->sendResponse(hit);
 
 				if (hit == 0)
 				{
@@ -186,7 +186,7 @@ bool Online::play()
 			turn.setString(opponent->getName() + " won!");
 			bool res = false;
 			while (!res)
-				res = mult->ReceiveField(*opponent);
+				res = mult->receiveField(*opponent);
 			sent = true;
 		}
 		if (opponent->hasLost() && !sent)
@@ -195,7 +195,7 @@ bool Online::play()
 			turn.setString(local->getName() + " won!");
 			bool res = false;
 			while (!res)
-				res = mult->SendField(state);
+				res = mult->sendField(state);
 			sent = true;
 			local->showRemainingShips();
 		}
