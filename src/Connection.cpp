@@ -2,266 +2,266 @@
 
 Connection::Connection() : connected(false), listening(false)
 {
-	client.setBlocking(false);
-	listener.setBlocking(false);
+    client.setBlocking(false);
+    listener.setBlocking(false);
 }
 
 bool Connection::passiveConnection(int port)
 {
-	if (connected)
-		return true;
+    if (connected)
+        return true;
 
-	if ((listening && listener.getLocalPort() != port) || !listening)
-	{
-		if (listener.listen(port) != sf::Socket::Done)
-		{
-			listening = false;
-			return false;
-		}
-		else
-			listening = true;
-	}
+    if ((listening && listener.getLocalPort() != port) || !listening)
+    {
+        if (listener.listen(port) != sf::Socket::Done)
+        {
+            listening = false;
+            return false;
+        }
+        else
+            listening = true;
+    }
 
-	if (listener.accept(client) != sf::Socket::Done)
-	{
-		connected = false;
-		return false;
-	}
-	else
-	{
-		connected = true;
-		return true;
-	}
+    if (listener.accept(client) != sf::Socket::Done)
+    {
+        connected = false;
+        return false;
+    }
+    else
+    {
+        connected = true;
+        return true;
+    }
 }
 
 bool Connection::activeConnection(std::string ip, int port)
 {
-	if (connected)
-		return true;
+    if (connected)
+        return true;
 
-	if (listening)
-	{
-		listener.close();
-		listening = false;
-	}
+    if (listening)
+    {
+        listener.close();
+        listening = false;
+    }
 
-	client.setBlocking(true);
+    client.setBlocking(true);
 
-	if (client.connect(ip, port) != sf::Socket::Done)
-		connected = false;
-	else
-		connected = true;
-	
-	client.setBlocking(false);
+    if (client.connect(ip, port) != sf::Socket::Done)
+        connected = false;
+    else
+        connected = true;
 
-	return connected;
+    client.setBlocking(false);
+
+    return connected;
 }
 
-bool Connection::sendName(const std::string &name)
+bool Connection::sendName(const std::string& name)
 {
-	sf::Packet pkt;
-	pkt << sf::String(name);
+    sf::Packet pkt;
+    pkt << sf::String(name);
 
-	return client.send(pkt) == sf::Socket::Done;
+    return client.send(pkt) == sf::Socket::Done;
 }
 
-bool Connection::receiveName(std::string &name)
+bool Connection::receiveName(std::string& name)
 {
-	if (!connected)
-		return false;
+    if (!connected)
+        return false;
 
-	sf::Packet pkt;
-	sf::Socket::Status status = client.receive(pkt);
-	sf::String str;
+    sf::Packet pkt;
+    sf::Socket::Status status = client.receive(pkt);
+    sf::String str;
 
-	switch (status)
-	{
-	case sf::Socket::Done:
-		pkt >> str;
-		name = str.toAnsiString();
+    switch (status)
+    {
+    case sf::Socket::Done:
+        pkt >> str;
+        name = str.toAnsiString();
 
-		return true;
-	case sf::Socket::Partial:
-		while (status == sf::Socket::Partial)
-			status = client.receive(pkt);
+        return true;
+    case sf::Socket::Partial:
+        while (status == sf::Socket::Partial)
+            status = client.receive(pkt);
 
-		pkt >> str;
-		name = str.toAnsiString();
+        pkt >> str;
+        name = str.toAnsiString();
 
-		return true;
-	default:
-		return false;
-	}
+        return true;
+    default:
+        return false;
+    }
 }
 
 bool Connection::sendMove(int x, int y)
 {
-	if (!connected)
-		return false;
+    if (!connected)
+        return false;
 
-	sf::Packet pkt;
-	pkt << static_cast <sf::Int8>(x) << static_cast <sf::Int8>(y);
+    sf::Packet pkt;
+    pkt << static_cast <sf::Int8>(x) << static_cast <sf::Int8>(y);
 
-	return client.send(pkt) == sf::Socket::Done;
+    return client.send(pkt) == sf::Socket::Done;
 }
 
-bool Connection::receiveMove(int &x, int &y)
+bool Connection::receiveMove(int& x, int& y)
 {
-	if (!connected)
-		return false;
+    if (!connected)
+        return false;
 
-	sf::Packet pkt;
-	sf::Socket::Status status = client.receive(pkt);
-	sf::Int8 buf_x = -1, buf_y = -1;
+    sf::Packet pkt;
+    sf::Socket::Status status = client.receive(pkt);
+    sf::Int8 buf_x = -1, buf_y = -1;
 
-	switch (status)
-	{
-	case sf::Socket::Done:
-		pkt >> buf_x >> buf_y;
-		x = static_cast <int>(buf_x);
-		y = static_cast <int>(buf_y);
+    switch (status)
+    {
+    case sf::Socket::Done:
+        pkt >> buf_x >> buf_y;
+        x = static_cast <int>(buf_x);
+        y = static_cast <int>(buf_y);
 
-		return true;
-	case sf::Socket::Partial:
-		while (status == sf::Socket::Partial)
-			status = client.receive(pkt);
+        return true;
+    case sf::Socket::Partial:
+        while (status == sf::Socket::Partial)
+            status = client.receive(pkt);
 
-		pkt >> buf_x >> buf_y;
-		x = static_cast <int>(buf_x);
-		y = static_cast <int>(buf_y);
+        pkt >> buf_x >> buf_y;
+        x = static_cast <int>(buf_x);
+        y = static_cast <int>(buf_y);
 
-		return true;
-	default:
-		return false;
-	}
+        return true;
+    default:
+        return false;
+    }
 }
 
 bool Connection::sendResponse(int hit)
 {
-	if (!connected)
-		return false;
+    if (!connected)
+        return false;
 
-	sf::Packet pkt;
-	pkt << static_cast <sf::Int16>(hit);
+    sf::Packet pkt;
+    pkt << static_cast <sf::Int16>(hit);
 
-	return client.send(pkt) == sf::Socket::Done;
+    return client.send(pkt) == sf::Socket::Done;
 }
 
-bool Connection::receiveResponse(int &hit)
+bool Connection::receiveResponse(int& hit)
 {
-	if (!connected)
-		return false;
+    if (!connected)
+        return false;
 
-	sf::Packet pkt;
-	sf::Socket::Status status = client.receive(pkt);
-	sf::Int16 buf_hit = -1;
+    sf::Packet pkt;
+    sf::Socket::Status status = client.receive(pkt);
+    sf::Int16 buf_hit = -1;
 
-	switch (status)
-	{
-	case sf::Socket::Done:
-		pkt >> buf_hit;
-		hit = static_cast <int>(buf_hit);
-		return true;
-	case sf::Socket::Partial:
-		while (status == sf::Socket::Partial)
-			status = client.receive(pkt);
+    switch (status)
+    {
+    case sf::Socket::Done:
+        pkt >> buf_hit;
+        hit = static_cast <int>(buf_hit);
+        return true;
+    case sf::Socket::Partial:
+        while (status == sf::Socket::Partial)
+            status = client.receive(pkt);
 
-		pkt >> buf_hit;
-		hit = static_cast <int>(buf_hit);
-		return true;
-	default:
-		return false;
-	}
+        pkt >> buf_hit;
+        hit = static_cast <int>(buf_hit);
+        return true;
+    default:
+        return false;
+    }
 }
 
 bool Connection::sendField(int state[10][10])
 {
-	if (!connected)
-		return false;
+    if (!connected)
+        return false;
 
-	sf::Packet pkt;
-	for (int i = 0; i < 10; ++i)
-		for (int j = 0; j < 10; ++j)
-			pkt << sf::Int16(state[i][j]);
+    sf::Packet pkt;
+    for (int i = 0; i < 10; ++i)
+        for (int j = 0; j < 10; ++j)
+            pkt << sf::Int16(state[i][j]);
 
-	return client.send(pkt) == sf::Socket::Done;
+    return client.send(pkt) == sf::Socket::Done;
 }
 
-bool Connection::receiveField(RemoteField &b)
+bool Connection::receiveField(RemoteField& b)
 {
-	if (!connected)
-		return false;
+    if (!connected)
+        return false;
 
-	sf::Packet pkt;
-	sf::Socket::Status status = client.receive(pkt);
+    sf::Packet pkt;
+    sf::Socket::Status status = client.receive(pkt);
 
-	switch (status)
-	{
-	case sf::Socket::Done:
-		for (int i = 0; i < 10; ++i)
-		{
-			for (int j = 0; j < 10; ++j)
-			{
-				sf::Int16 buf = 0;
-				pkt >> buf;
-				if (buf == 1 && b[i][j].getFillColor() == blackColor)
-					b[i][j].setFillColor(greenColor);
-			}
-		}
-		return true;
-	case sf::Socket::Partial:
-		while (status == sf::Socket::Partial)
-			status = client.receive(pkt);
+    switch (status)
+    {
+    case sf::Socket::Done:
+        for (int i = 0; i < 10; ++i)
+        {
+            for (int j = 0; j < 10; ++j)
+            {
+                sf::Int16 buf = 0;
+                pkt >> buf;
+                if (buf == 1 && b[i][j].getFillColor() == blackColor)
+                    b[i][j].setFillColor(greenColor);
+            }
+        }
+        return true;
+    case sf::Socket::Partial:
+        while (status == sf::Socket::Partial)
+            status = client.receive(pkt);
 
-		for (int i = 0; i < 10; ++i)
-		{
-			for (int j = 0; j < 10; ++j)
-			{
-				sf::Int16 buf = 0;
-				pkt >> buf;
-				if (buf == 1 && b[i][j].getFillColor() == blackColor)
-					b[i][j].setFillColor(greenColor);
-			}
-		}
-		return true;
-	default:
-		return false;
-	}
+        for (int i = 0; i < 10; ++i)
+        {
+            for (int j = 0; j < 10; ++j)
+            {
+                sf::Int16 buf = 0;
+                pkt >> buf;
+                if (buf == 1 && b[i][j].getFillColor() == blackColor)
+                    b[i][j].setFillColor(greenColor);
+            }
+        }
+        return true;
+    default:
+        return false;
+    }
 }
 
-bool Connection::receiveTurn(int &turn)
+bool Connection::receiveTurn(int& turn)
 {
-	if (!connected)
-		return false;
+    if (!connected)
+        return false;
 
-	sf::Clock clock;
-	sf::Packet pkt = {};
-	sf::Socket::Status status = client.receive(pkt);
-	while (status != sf::Socket::Done)
-	{
-		status = client.receive(pkt);
-		if (status != sf::Socket::Done && status != sf::Socket::Partial && clock.getElapsedTime().asMilliseconds() > 5000)
-			return false;
-	}
+    sf::Clock clock;
+    sf::Packet pkt = {};
+    sf::Socket::Status status = client.receive(pkt);
+    while (status != sf::Socket::Done)
+    {
+        status = client.receive(pkt);
+        if (status != sf::Socket::Done && status != sf::Socket::Partial && clock.getElapsedTime().asMilliseconds() > 5000)
+            return false;
+    }
 
-	sf::Int16 buf;
-	pkt >> buf;
-	turn = buf;
+    sf::Int16 buf;
+    pkt >> buf;
+    turn = buf;
 
-	return true;
+    return true;
 }
 
 void Connection::disconnect()
 {
-	if (listening)
-	{
-		listener.close();
-		listening = false;
-	}
+    if (listening)
+    {
+        listener.close();
+        listening = false;
+    }
 
-	if (connected)
-	{
-		client.disconnect();
-		connected = false;
-	}
+    if (connected)
+    {
+        client.disconnect();
+        connected = false;
+    }
 }
