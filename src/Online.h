@@ -19,9 +19,7 @@ public:
 
     void initLocal(const std::string& name);
     void setOpponentName(const std::string& name);
-    void initPlayers();
     void setLocalMove(int localMove);
-    void setLocalName(const std::string& name);
 
     std::pair<Field*, Field*> getFields() const override;
     bool play() override;

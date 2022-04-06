@@ -13,7 +13,6 @@ public:
 	Game(sf::RenderWindow &wnd);
 
 	virtual bool play() = 0;
-	virtual void initPlayers() = 0;
 	virtual std::pair<Field*, Field*> getFields() const = 0;
 
 protected:

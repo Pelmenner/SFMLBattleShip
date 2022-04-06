@@ -140,21 +140,6 @@ std::pair<Field*, Field*> Local::getFields() const
     return { field1, field2 };
 }
 
-void Local::setBlocks(std::vector<sf::RectangleShape>& blocks)
-{
-    for (int i = 0; i < 10; ++i)
-    {
-        blocks[i].setFillColor(blackColor);
-        blocks[i].setOutlineColor(sf::Color::White);
-        blocks[i].setOutlineThickness(5);
-        blocks[i].setSize({ 50, 50 });
-    }
-
-    for (int i = 0; i < 4; ++i)
-        for (int j = 0; j <= i; ++j)
-            blocks[(i * (i + 1)) / 2 + j].setPosition(775.0f + (float)j * 50.0f, 100.0f + (float)i * 100.0f);
-}
-
 void Local::setNames(const std::string& name1, const std::string& name2)
 {
     field1->setName(name1), field2->setName(name2);

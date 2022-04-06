@@ -101,8 +101,7 @@ int main()
                         continue;
 
                     Online game(wnd, &session);
-                    game.setLocalName(nickname);
-                    game.initPlayers();
+                    game.initLocal(nickname);
                     session.sendName(nickname);
                     std::string opponent = "";
                     res = waitOpponent(wnd, session, opponent);

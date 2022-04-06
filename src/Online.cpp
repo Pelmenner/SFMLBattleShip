@@ -37,19 +37,9 @@ void Online::setOpponentName(const std::string &name)
 	opponent->setName(name);
 }
 
-void Online::initPlayers()
-{
-    initLocal(local->getName());
-}
-
 void Online::setLocalMove(int move)
 {
 	localMove = move;
-}
-
-void Online::setLocalName(const std::string& name)
-{
-	local->setName(name);
 }
 
 std::pair<Field*, Field*> Online::getFields() const
