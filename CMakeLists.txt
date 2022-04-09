@@ -50,8 +50,9 @@ else()
     set(SFML_DEPENDENCIES ${GL} ${GLU} png16 m z Xrandr Xext Xrender X11 pthread xcb Xau Xdmcp udev freetype)
 endif()
 
-target_include_directories(BattleShip PRIVATE $<SEMICOLON>$<JOIN:${CMAKE_SYSTEM_PREFIX_PATH},/include$<SEMICOLON>>/include)
-target_include_directories(BattleShip PRIVATE $<SEMICOLON>$<JOIN:${CMAKE_PREFIX_PATH},/include$<SEMICOLON>>/include)
+foreach(PREFIX_DIR IN LISTS ${CMAKE_SYSTEM_PREFIX_PATH} ${CMAKE_PREFIX_PATH})
+    target_include_directories(BattleShip PRIVATE ${PREFIX_DIR}/include)
+endforeach()
 target_link_libraries(BattleShip PRIVATE ${SFML} ${SFML_DEPENDENCIES})
 
 install(TARGETS BattleShip DESTINATION .)
