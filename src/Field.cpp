@@ -14,7 +14,7 @@ Field::Field(sf::Vector2f pos) : position(pos)
         for (size_t j = 0; j < 10; ++j)
         {
             cells[i][j].setFillColor(blackColor);
-            cells[i][j].setOutlineThickness(5.f);
+            cells[i][j].setOutlineThickness(-2.f);
             cells[i][j].setOutlineColor(blueColor);
             cells[i][j].setSize({ 50.f, 50.f });
         }
